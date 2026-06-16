@@ -298,16 +298,15 @@ textarea#transcript {
 <body>
 
 <header>
-<div id="key-area">
+<div id="key-area" style="display:flex; align-items:center; gap:0.6rem;">
   <div class="key-pill" id="key-pill">
     <input type="password" id="api-key-input" placeholder="API Key Anthropic…"/>
     <button class="key-btn" onclick="saveKey()">Guardar</button>
   </div>
-  <div id="key-status" style="display:none; font-size:0.8rem; color:#86efac;">
+  <span id="key-status" style="display:none; font-size:0.8rem; color:#86efac; font-weight:600;">
     ● Conectado
-  </div>
+  </span>
 </div>
-
 <main>
 
   <!-- ════ PANTALLA 1: GRABADORA ════ -->
@@ -386,12 +385,12 @@ let timerInterval = null;
 let seconds       = 0;
 let isRecording   = false;
 
-  // Cargar clave guardada al iniciar
+// Cargar clave guardada al iniciar
 const savedKey = localStorage.getItem('anthropic_key');
 if (savedKey) {
   apiKey = savedKey;
-  document.getElementById('key-area').innerHTML =
-    `<span class="key-saved">🔑 API Key activa</span>`;
+  document.getElementById('key-pill').style.display = 'none';
+  document.getElementById('key-status').style.display = 'block';
 }
 
 
@@ -405,11 +404,11 @@ let micStream     = null;
 //  API KEY
 // ════════════════════════════════════════════════════════════
 function saveKey() {
+  function saveKey() {
   const k = document.getElementById('api-key-input').value.trim();
   if (!k) return;
   apiKey = k;
   localStorage.setItem('anthropic_key', k);
-  // Ocultar input y mostrar estado
   document.getElementById('key-pill').style.display = 'none';
   document.getElementById('key-status').style.display = 'block';
   showToast('API Key guardada ✓');
