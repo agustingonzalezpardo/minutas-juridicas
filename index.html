@@ -298,14 +298,15 @@ textarea#transcript {
 <body>
 
 <header>
-  <div class="brand">⚖ Minutas<em>Jurídicas</em></div>
-  <div id="key-area">
-    <div class="key-pill">
-      <input type="password" id="api-key-input" placeholder="API Key Anthropic…"/>
-      <button class="key-btn" onclick="saveKey()">Guardar</button>
-    </div>
+<div id="key-area">
+  <div class="key-pill" id="key-pill">
+    <input type="password" id="api-key-input" placeholder="API Key Anthropic…"/>
+    <button class="key-btn" onclick="saveKey()">Guardar</button>
   </div>
-</header>
+  <div id="key-status" style="display:none; font-size:0.8rem; color:#86efac;">
+    ● Conectado
+  </div>
+</div>
 
 <main>
 
@@ -407,10 +408,19 @@ function saveKey() {
   const k = document.getElementById('api-key-input').value.trim();
   if (!k) return;
   apiKey = k;
-  localStorage.setItem('anthropic_key', k);   // <--- NUEVA LÍNEA
-  document.getElementById('key-area').innerHTML =
-    `<span class="key-saved">🔑 API Key activa</span>`;
+  localStorage.setItem('anthropic_key', k);
+  // Ocultar input y mostrar estado
+  document.getElementById('key-pill').style.display = 'none';
+  document.getElementById('key-status').style.display = 'block';
   showToast('API Key guardada ✓');
+}
+
+// Al cargar, si hay clave guardada:
+const savedKey = localStorage.getItem('anthropic_key');
+if (savedKey) {
+  apiKey = savedKey;
+  document.getElementById('key-pill').style.display = 'none';
+  document.getElementById('key-status').style.display = 'block';
 }
 // ════════════════════════════════════════════════════════════
 //  SCREEN SWITCH
