@@ -588,7 +588,7 @@ async function onRecordingStop() {
 }
 
 // ════════════════════════════════════════════════════════════
-//  TRANSCRIPTION via Claude Audio API
+//  TRANSCRIPTION Audio API
 // ════════════════════════════════════════════════════════════
 async function transcribeAudio(blob) {
   const b64 = await blobToBase64(blob);
@@ -631,7 +631,7 @@ Entrega solo la transcripción limpia, sin comentarios adicionales.`,
 }
 
 // ════════════════════════════════════════════════════════════
-//  GENERATE MINUTA via Claude
+//  GENERATE MINUTA 
 // ════════════════════════════════════════════════════════════
 async function generateMinuta() {
   const transcript = document.getElementById('transcript').value.trim();
