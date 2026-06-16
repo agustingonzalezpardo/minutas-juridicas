@@ -385,6 +385,15 @@ let timerInterval = null;
 let seconds       = 0;
 let isRecording   = false;
 
+  // Cargar clave guardada al iniciar
+const savedKey = localStorage.getItem('anthropic_key');
+if (savedKey) {
+  apiKey = savedKey;
+  document.getElementById('key-area').innerHTML =
+    `<span class="key-saved">🔑 API Key activa</span>`;
+}
+
+
 // Waveform
 let audioCtx      = null;
 let analyser      = null;
@@ -398,11 +407,11 @@ function saveKey() {
   const k = document.getElementById('api-key-input').value.trim();
   if (!k) return;
   apiKey = k;
+  localStorage.setItem('anthropic_key', k);   // <--- NUEVA LÍNEA
   document.getElementById('key-area').innerHTML =
     `<span class="key-saved">🔑 API Key activa</span>`;
   showToast('API Key guardada ✓');
 }
-
 // ════════════════════════════════════════════════════════════
 //  SCREEN SWITCH
 // ════════════════════════════════════════════════════════════
