@@ -29,7 +29,6 @@ body {
   min-height: 100vh;
 }
 
-/* ── Header ── */
 header {
   padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--border);
@@ -89,7 +88,6 @@ header {
 }
 #key-status.visible { display: block; }
 
-/* ── Main ── */
 main {
   flex: 1;
   display: flex;
@@ -104,7 +102,6 @@ main {
 .screen { display: none; width: 100%; }
 .screen.active { display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
 
-/* ── Waveform ── */
 .wave-wrap {
   width: 100%;
   height: 80px;
@@ -130,7 +127,6 @@ canvas#waveform {
   pointer-events: none;
 }
 
-/* ── Timer ── */
 .timer {
   font-size: 2.8rem;
   font-weight: 300;
@@ -148,7 +144,6 @@ canvas#waveform {
 }
 .timer-label.active { color: var(--rec); }
 
-/* ── Botón de grabación ── */
 .rec-ring {
   width: 110px;
   height: 110px;
@@ -185,7 +180,6 @@ canvas#waveform {
   animation: none;
 }
 
-/* ── Estado ── */
 .status-line {
   font-size: 0.8rem;
   color: var(--dim);
@@ -195,8 +189,8 @@ canvas#waveform {
 .status-line.recording { color: #fca5a5; }
 .status-line.done { color: #86efac; }
 .status-line.err { color: #fca5a5; }
+.status-line.processing { color: var(--gold); }
 
-/* ── Playback ── */
 .playback-wrap {
   width: 100%;
   background: rgba(255,255,255,0.04);
@@ -217,7 +211,6 @@ canvas#waveform {
 }
 audio { width: 100%; border-radius: 6px; }
 
-/* ── Transcripción ── */
 .transcript-wrap {
   width: 100%;
   background: rgba(255,255,255,0.03);
@@ -253,7 +246,6 @@ textarea#transcript {
   min-height: 100px;
 }
 
-/* ── Botones ── */
 .gen-btn {
   width: 100%;
   padding: 0.8rem;
@@ -283,7 +275,6 @@ textarea#transcript {
 .new-btn.visible { display: inline-block; }
 .new-btn:hover { border-color: var(--cream); color: var(--cream); }
 
-/* ── Minuta ── */
 .minuta-screen {
   background: var(--paper);
   border-radius: 12px;
@@ -344,7 +335,6 @@ textarea#transcript {
 }
 @media(max-width:520px){ .minuta-doc { padding: 1rem; } }
 
-/* ── Toast ── */
 .toast {
   position: fixed;
   bottom: 1.5rem;
@@ -385,7 +375,6 @@ textarea#transcript {
 </header>
 
 <main>
-  <!-- Pantalla grabadora -->
   <div class="screen active" id="screen-rec">
     <div class="wave-wrap">
       <canvas id="waveform"></canvas>
@@ -410,9 +399,10 @@ textarea#transcript {
       <div class="transcript-head">
         📝 Transcripción <span id="transcript-badge"></span>
       </div>
-      <textarea id="transcript" placeholder="La transcripción aparecerá aquí…"></textarea>
+      <textarea id="transcript" placeholder="La transcripción aparecerá aquí… (puedes editarla manualmente)"></textarea>
     </div>
 
+    <!-- Botón para transcribir manualmente (opcional) -->
     <button class="gen-btn" id="gen-btn" onclick="generateMinuta()">
       Generar Minuta →
     </button>
@@ -421,7 +411,6 @@ textarea#transcript {
     </button>
   </div>
 
-  <!-- Pantalla minuta -->
   <div class="screen" id="screen-minuta">
     <div class="minuta-screen">
       <div class="minuta-toolbar">
@@ -441,7 +430,7 @@ textarea#transcript {
 
 <script>
 // ════════════════════════════════════════════════════════════
-//  STATE
+// STATE
 // ════════════════════════════════════════════════════════════
 let apiKey = '';
 let mediaRecorder = null;
@@ -466,7 +455,7 @@ let waveRAF = null;
 let micStream = null;
 
 // ════════════════════════════════════════════════════════════
-//  API KEY
+// API KEY
 // ════════════════════════════════════════════════════════════
 function saveKey() {
   const k = document.getElementById('api-key-input').value.trim();
@@ -479,7 +468,7 @@ function saveKey() {
 }
 
 // ════════════════════════════════════════════════════════════
-//  SCREEN SWITCH
+// SCREEN SWITCH
 // ════════════════════════════════════════════════════════════
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -488,7 +477,7 @@ function showScreen(id) {
 }
 
 // ════════════════════════════════════════════════════════════
-//  WAVEFORM
+// WAVEFORM
 // ════════════════════════════════════════════════════════════
 function startWaveform(stream) {
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -532,7 +521,7 @@ function stopWaveform() {
 }
 
 // ════════════════════════════════════════════════════════════
-//  TIMER
+// TIMER
 // ════════════════════════════════════════════════════════════
 function startTimer() {
   seconds = 0;
@@ -550,7 +539,7 @@ function updateTimerDisplay() {
 }
 
 // ════════════════════════════════════════════════════════════
-//  RECORDING
+// RECORDING
 // ════════════════════════════════════════════════════════════
 async function toggleRecording() {
   if (isRecording) {
@@ -626,31 +615,34 @@ async function onRecordingStop() {
   btn.textContent = '🎙';
   document.getElementById('new-btn').classList.add('visible');
 
-  if (!apiKey) {
-    setStatus('Grabación lista. Ingresa API Key para transcribir.', 'done');
-    document.getElementById('transcript-wrap').classList.add('visible');
-    document.getElementById('transcript-badge').textContent = '';
-    document.getElementById('gen-btn').classList.add('visible');
-    return;
-  }
+  // Mostrar el área de transcripción y el botón de generar minuta SIEMPRE
+  document.getElementById('transcript-wrap').classList.add('visible');
+  document.getElementById('gen-btn').classList.add('visible');
 
-  setStatus('Transcribiendo con IA…', 'processing');
-  try {
-    const transcript = await transcribeAudio(audioBlob);
-    document.getElementById('transcript').value = transcript;
-    document.getElementById('transcript-badge').textContent = '✓ Lista';
-    document.getElementById('transcript-wrap').classList.add('visible');
-    document.getElementById('gen-btn').classList.add('visible');
-    setStatus('Transcripción lista. Genera la minuta.', 'done');
-  } catch (e) {
-    setStatus(`Error: ${e.message}`, 'err');
-    document.getElementById('transcript-wrap').classList.add('visible');
-    document.getElementById('gen-btn').classList.add('visible');
+  // Intentar transcripción automática solo si hay API Key
+  if (apiKey) {
+    setStatus('Transcribiendo con IA… (puede tomar unos segundos)', 'processing');
+    try {
+      // Llamar a transcribeAudio con timeout de 30 segundos
+      const transcript = await Promise.race([
+        transcribeAudio(audioBlob),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Tiempo de espera agotado')), 30000))
+      ]);
+      document.getElementById('transcript').value = transcript;
+      document.getElementById('transcript-badge').textContent = '✓ Lista';
+      setStatus('Transcripción automática completada. Revísala y genera la minuta.', 'done');
+    } catch (e) {
+      setStatus(`Error en transcripción automática: ${e.message}. Puedes escribirla manualmente.`, 'err');
+      document.getElementById('transcript-badge').textContent = '⚠️ Falló';
+    }
+  } else {
+    setStatus('No hay API Key. Escribe la transcripción manualmente.', 'done');
+    document.getElementById('transcript-badge').textContent = '✏️ Manual';
   }
 }
 
 // ════════════════════════════════════════════════════════════
-//  TRANSCRIPTION (Claude Audio)
+// TRANSCRIPTION (Claude Audio API - experimental)
 // ════════════════════════════════════════════════════════════
 async function transcribeAudio(blob) {
   const b64 = await blobToBase64(blob);
@@ -665,7 +657,7 @@ async function transcribeAudio(blob) {
       'anthropic-beta': 'audios-2025-05-14'
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
+      model: 'claude-sonnet-4-6', // o 'claude-3-5-sonnet-20241022'
       max_tokens: 4000,
       system: `Eres un asistente legal chileno especializado en transcripción de reuniones jurídicas.
 Transcribe el audio con exactitud. Identifica los hablantes si es posible (Abogado / Cliente).
@@ -683,19 +675,19 @@ Entrega solo la transcripción limpia, sin comentarios adicionales.`,
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err?.error?.message || `Error ${res.status}`);
+    throw new Error(err?.error?.message || `Error HTTP ${res.status}`);
   }
   const data = await res.json();
   return data.content?.map(c => c.text || '').join('').trim() || '';
 }
 
 // ════════════════════════════════════════════════════════════
-//  GENERATE MINUTA
+// GENERATE MINUTA
 // ════════════════════════════════════════════════════════════
 async function generateMinuta() {
   const transcript = document.getElementById('transcript').value.trim();
   if (!transcript) {
-    showToast('Escribe o transcribe algo primero');
+    showToast('Por favor, escribe o transcribe el audio primero.');
     return;
   }
 
@@ -710,6 +702,7 @@ async function generateMinuta() {
   let minutaText = '';
 
   if (!apiKey) {
+    // Sin API, usamos plantilla básica
     minutaText = buildBasicMinuta(transcript, fecha, hora);
   } else {
     try {
@@ -805,7 +798,7 @@ Responde SOLO con la minuta, sin explicaciones adicionales.`,
       minutaText = data.content?.map(c => c.text || '').join('').trim();
     } catch (e) {
       minutaText = buildBasicMinuta(transcript, fecha, hora);
-      showToast('IA no disponible, minuta básica generada');
+      showToast('⚠️ Error con la IA, se generó una minuta básica.');
     }
   }
 
@@ -830,7 +823,7 @@ ${transcript}
 }
 
 // ════════════════════════════════════════════════════════════
-//  UTILITIES
+// UTILITIES
 // ════════════════════════════════════════════════════════════
 function resetRecorder() {
   audioBlob = null;
@@ -882,7 +875,7 @@ function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 </script>
 </body>
