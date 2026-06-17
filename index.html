@@ -3,21 +3,18 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Grabadora · Minutas Jurídicas</title>
+<title>Minutas Jurídicas · Grabadora</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --navy:   #1a2740;
-  --navy2:  #243555;
-  --gold:   #b8922a;
-  --cream:  #f7f4ef;
-  --paper:  #ffffff;
-  --mid:    #6b7280;
-  --border: #ddd8d0;
-  --rec:    #dc2626;
-  --green:  #16a34a;
-  --dim:    #94a3b8;
+  --navy: #0f1a2e;
+  --gold: #b8942a;
+  --cream: #f7f4ef;
+  --paper: #ffffff;
+  --rec: #dc2626;
+  --dim: #94a3b8;
+  --border: rgba(255,255,255,0.08);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,35 +29,36 @@ body {
   min-height: 100vh;
 }
 
+/* ── Header ── */
 header {
-  padding: 1.1rem 1.5rem .9rem;
-  border-bottom: 1px solid rgba(255,255,255,.07);
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-shrink: 0;
+  background: rgba(0,0,0,0.2);
 }
 .brand {
   font-family: 'EB Garamond', serif;
-  font-size: 1.3rem;
-  letter-spacing: .01em;
+  font-size: 1.2rem;
+  letter-spacing: 0.02em;
 }
 .brand em { color: var(--gold); font-style: normal; }
 
 #key-area {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
 }
 .key-pill {
   display: flex;
   align-items: center;
-  gap: .4rem;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.12);
+  gap: 0.3rem;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
   border-radius: 20px;
-  padding: .3rem .3rem .3rem .75rem;
-  font-size: .75rem;
+  padding: 0.2rem 0.2rem 0.2rem 0.7rem;
 }
 .key-pill input {
   background: transparent;
@@ -68,8 +66,8 @@ header {
   outline: none;
   color: var(--cream);
   font-family: monospace;
-  font-size: .75rem;
-  width: 130px;
+  font-size: 0.7rem;
+  width: 120px;
 }
 .key-pill input::placeholder { color: var(--dim); }
 .key-btn {
@@ -77,87 +75,109 @@ header {
   color: white;
   border: none;
   border-radius: 14px;
-  padding: .25rem .65rem;
-  font-size: .72rem;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.65rem;
   font-weight: 700;
   cursor: pointer;
-  transition: opacity .15s;
 }
-.key-btn:hover { opacity: .85; }
+.key-btn:hover { opacity: 0.85; }
 #key-status {
   display: none;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: #86efac;
-  font-weight: 600;
+  font-weight: 500;
 }
+#key-status.visible { display: block; }
 
+/* ── Main ── */
 main {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem 1.25rem 3rem;
-  gap: 2rem;
-  max-width: 700px;
+  padding: 1.5rem 1rem 2rem;
+  max-width: 640px;
   width: 100%;
   margin: 0 auto;
 }
 
 .screen { display: none; width: 100%; }
-.screen.active { display: flex; flex-direction: column; align-items: center; gap: 1.75rem; }
+.screen.active { display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
 
+/* ── Waveform ── */
 .wave-wrap {
   width: 100%;
-  height: 90px;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 12px;
+  height: 80px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 10px;
   overflow: hidden;
   position: relative;
 }
 canvas#waveform {
-  width: 100%; height: 100%;
+  width: 100%;
+  height: 100%;
   display: block;
 }
 .wave-idle {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-size: .8rem; color: var(--dim);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: var(--dim);
   pointer-events: none;
 }
 
-.rec-ring {
-  width: 120px; height: 120px;
-  border-radius: 50%;
-  border: 2px solid rgba(255,255,255,.1);
-  display: flex; align-items: center; justify-content: center;
-  position: relative;
+/* ── Timer ── */
+.timer {
+  font-size: 2.8rem;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  margin-top: -0.5rem;
 }
-.rec-ring::before {
-  content: '';
-  position: absolute; inset: -8px;
+.timer-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: -0.8rem;
+}
+.timer-label.active { color: var(--rec); }
+
+/* ── Botón de grabación ── */
+.rec-ring {
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
-  border: 1px solid rgba(255,255,255,.05);
+  border: 2px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 .rec-btn {
-  width: 96px; height: 96px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
-  border: none; cursor: pointer;
+  border: none;
+  cursor: pointer;
   background: var(--rec);
-  display: flex; align-items: center; justify-content: center;
   font-size: 2rem;
-  transition: transform .15s, background .2s;
-  position: relative;
-  box-shadow: 0 0 0 0 rgba(220,38,38,.4);
+  transition: transform 0.15s, background 0.2s;
+  box-shadow: 0 0 0 0 rgba(220,38,38,0.3);
 }
 .rec-btn:hover { transform: scale(1.04); }
 .rec-btn.recording {
   background: #b91c1c;
-  animation: pulse-big 1.4s ease-in-out infinite;
+  animation: pulse 1.4s ease-in-out infinite;
 }
-@keyframes pulse-big {
-  0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,.5); }
-  50%      { box-shadow: 0 0 0 18px rgba(220,38,38,0); }
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.5); }
+  50% { box-shadow: 0 0 0 16px rgba(220,38,38,0); }
 }
 .rec-btn.processing {
   background: var(--gold);
@@ -165,87 +185,105 @@ canvas#waveform {
   animation: none;
 }
 
-.timer {
-  font-size: 2.6rem;
-  font-weight: 300;
-  letter-spacing: .08em;
-  font-variant-numeric: tabular-nums;
-  color: var(--cream);
-}
-.timer-label {
-  font-size: .72rem; font-weight: 600; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--dim); margin-top: -.5rem;
-}
-.timer-label.active { color: var(--rec); }
-
+/* ── Estado ── */
 .status-line {
-  font-size: .85rem; color: var(--dim);
-  min-height: 1.2rem; text-align: center;
-  transition: color .2s;
+  font-size: 0.8rem;
+  color: var(--dim);
+  min-height: 1.2rem;
+  text-align: center;
 }
 .status-line.recording { color: #fca5a5; }
-.status-line.processing { color: var(--gold); }
 .status-line.done { color: #86efac; }
-.status-line.err  { color: #fca5a5; }
+.status-line.err { color: #fca5a5; }
 
+/* ── Playback ── */
 .playback-wrap {
   width: 100%;
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 1rem 1.25rem;
+  padding: 0.8rem 1rem;
   display: none;
   flex-direction: column;
-  gap: .6rem;
+  gap: 0.4rem;
 }
 .playback-wrap.visible { display: flex; }
-.playback-label { font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--dim); }
-audio { width: 100%; outline: none; border-radius: 6px; }
-audio::-webkit-media-controls-panel { background: #1e3050; }
+.playback-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+audio { width: 100%; border-radius: 6px; }
 
+/* ── Transcripción ── */
 .transcript-wrap {
   width: 100%;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
   border-radius: 10px;
   overflow: hidden;
   display: none;
 }
 .transcript-wrap.visible { display: block; }
 .transcript-head {
-  padding: .7rem 1rem;
-  border-bottom: 1px solid rgba(255,255,255,.07);
-  font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
-  color: var(--dim); display: flex; justify-content: space-between; align-items: center;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+  display: flex;
+  justify-content: space-between;
 }
-.transcript-head span { color: #86efac; font-weight: 600; }
+.transcript-head span { color: #86efac; }
 textarea#transcript {
-  width: 100%; background: transparent; border: none; outline: none;
-  color: var(--cream); font-family: 'Inter', sans-serif; font-size: .88rem;
-  line-height: 1.65; padding: 1rem; resize: vertical; min-height: 140px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--cream);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  padding: 0.8rem 1rem;
+  resize: vertical;
+  min-height: 100px;
 }
 
+/* ── Botones ── */
 .gen-btn {
-  width: 100%; padding: .9rem;
-  background: var(--gold); border: none; border-radius: 8px;
-  color: white; font-size: 1rem; font-weight: 700;
-  cursor: pointer; transition: opacity .15s;
+  width: 100%;
+  padding: 0.8rem;
+  background: var(--gold);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
   display: none;
 }
 .gen-btn.visible { display: block; }
-.gen-btn:hover { opacity: .88; }
+.gen-btn:hover { opacity: 0.88; }
 
 .new-btn {
   background: transparent;
-  border: 1px solid rgba(255,255,255,.15);
-  color: var(--dim); border-radius: 6px;
-  padding: .5rem 1.2rem; font-size: .8rem; font-weight: 600;
-  cursor: pointer; transition: all .15s;
+  border: 1px solid var(--border);
+  color: var(--dim);
+  border-radius: 6px;
+  padding: 0.4rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
   display: none;
 }
 .new-btn.visible { display: inline-block; }
 .new-btn:hover { border-color: var(--cream); color: var(--cream); }
 
+/* ── Minuta ── */
 .minuta-screen {
   background: var(--paper);
   border-radius: 12px;
@@ -255,50 +293,81 @@ textarea#transcript {
 }
 .minuta-toolbar {
   background: var(--navy);
-  padding: .85rem 1.25rem;
-  display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: .6rem;
+  padding: 0.7rem 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 .minuta-toolbar h2 {
   font-family: 'EB Garamond', serif;
-  font-size: 1.1rem; color: var(--cream);
+  font-size: 1rem;
+  color: var(--cream);
 }
-.toolbar-btns { display: flex; gap: .4rem; flex-wrap: wrap; }
+.toolbar-btns { display: flex; gap: 0.3rem; flex-wrap: wrap; }
 .tbtn {
-  padding: .4rem .9rem; border-radius: 5px;
-  font-size: .76rem; font-weight: 700; cursor: pointer;
-  transition: all .15s;
+  padding: 0.3rem 0.8rem;
+  border-radius: 5px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
 }
-.tbtn-back { background: transparent; border: 1px solid rgba(255,255,255,.2); color: var(--dim); }
+.tbtn-back {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: var(--dim);
+}
 .tbtn-back:hover { border-color: var(--cream); color: var(--cream); }
-.tbtn-copy { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); color: var(--cream); }
-.tbtn-copy:hover { background: rgba(255,255,255,.15); }
-.tbtn-dl { background: var(--gold); border: none; color: white; }
-.tbtn-dl:hover { opacity: .88; }
-.minuta-doc {
-  padding: 2rem 2.25rem;
-  font-family: 'EB Garamond', serif;
-  font-size: 1rem; line-height: 1.8;
-  white-space: pre-wrap; word-break: break-word;
-  color: var(--navy); min-height: 300px;
+.tbtn-copy {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--cream);
 }
-@media(max-width:520px){ .minuta-doc { padding: 1.25rem; } }
+.tbtn-copy:hover { background: rgba(255,255,255,0.15); }
+.tbtn-dl {
+  background: var(--gold);
+  border: none;
+  color: white;
+}
+.tbtn-dl:hover { opacity: 0.88; }
 
+.minuta-doc {
+  padding: 1.5rem 2rem;
+  font-family: 'EB Garamond', serif;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 250px;
+}
+@media(max-width:520px){ .minuta-doc { padding: 1rem; } }
+
+/* ── Toast ── */
 .toast {
-  position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
-  background: var(--navy2); color: var(--cream);
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e2d4a;
+  color: var(--cream);
   border: 1px solid var(--gold);
-  padding: .6rem 1.4rem; border-radius: 30px;
-  font-size: .8rem; font-weight: 600;
-  opacity: 0; pointer-events: none; transition: opacity .3s;
+  padding: 0.5rem 1.2rem;
+  border-radius: 30px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
   z-index: 999;
 }
 .toast.show { opacity: 1; }
 
 @media(max-width:480px){
-  .rec-btn { width: 80px; height: 80px; font-size: 1.6rem; }
-  .rec-ring { width: 100px; height: 100px; }
-  .timer { font-size: 2rem; }
+  .rec-btn { width: 72px; height: 72px; font-size: 1.5rem; }
+  .rec-ring { width: 90px; height: 90px; }
+  .timer { font-size: 2.2rem; }
 }
 </style>
 </head>
@@ -308,7 +377,7 @@ textarea#transcript {
   <div class="brand">⚖ Minutas<em>Jurídicas</em></div>
   <div id="key-area">
     <div class="key-pill" id="key-pill">
-      <input type="password" id="api-key-input" placeholder="API Key Anthropic…"/>
+      <input type="password" id="api-key-input" placeholder="API Key"/>
       <button class="key-btn" onclick="saveKey()">Guardar</button>
     </div>
     <span id="key-status">● Conectado</span>
@@ -316,9 +385,8 @@ textarea#transcript {
 </header>
 
 <main>
-
+  <!-- Pantalla grabadora -->
   <div class="screen active" id="screen-rec">
-
     <div class="wave-wrap">
       <canvas id="waveform"></canvas>
       <div class="wave-idle" id="wave-idle">El audio aparecerá aquí al grabar</div>
@@ -331,16 +399,16 @@ textarea#transcript {
       <button class="rec-btn" id="rec-btn" onclick="toggleRecording()">🎙</button>
     </div>
 
-    <div class="status-line" id="status">Presiona el botón para comenzar a grabar la reunión</div>
+    <div class="status-line" id="status">Presiona el botón para comenzar</div>
 
     <div class="playback-wrap" id="playback-wrap">
-      <div class="playback-label">Escuchar grabación</div>
+      <div class="playback-label">🎧 Escuchar grabación</div>
       <audio id="audio-player" controls></audio>
     </div>
 
     <div class="transcript-wrap" id="transcript-wrap">
       <div class="transcript-head">
-        Transcripción <span id="transcript-badge"></span>
+        📝 Transcripción <span id="transcript-badge"></span>
       </div>
       <textarea id="transcript" placeholder="La transcripción aparecerá aquí…"></textarea>
     </div>
@@ -351,23 +419,22 @@ textarea#transcript {
     <button class="new-btn" id="new-btn" onclick="resetRecorder()">
       + Nueva grabación
     </button>
-
   </div>
 
+  <!-- Pantalla minuta -->
   <div class="screen" id="screen-minuta">
     <div class="minuta-screen">
       <div class="minuta-toolbar">
-        <h2>Minuta generada</h2>
+        <h2>📄 Minuta generada</h2>
         <div class="toolbar-btns">
           <button class="tbtn tbtn-back" onclick="showScreen('rec')">← Volver</button>
           <button class="tbtn tbtn-copy" onclick="copyMinuta()">Copiar</button>
-          <button class="tbtn tbtn-dl"   onclick="downloadMinuta()">⬇ .txt</button>
+          <button class="tbtn tbtn-dl" onclick="downloadMinuta()">⬇ .txt</button>
         </div>
       </div>
       <div class="minuta-doc" id="minuta-doc"></div>
     </div>
   </div>
-
 </main>
 
 <div class="toast" id="toast"></div>
@@ -376,27 +443,27 @@ textarea#transcript {
 // ════════════════════════════════════════════════════════════
 //  STATE
 // ════════════════════════════════════════════════════════════
-let apiKey        = '';
+let apiKey = '';
 let mediaRecorder = null;
-let audioChunks   = [];
-let audioBlob     = null;
+let audioChunks = [];
+let audioBlob = null;
 let timerInterval = null;
-let seconds       = 0;
-let isRecording   = false;
+let seconds = 0;
+let isRecording = false;
 
-// Cargar clave guardada al iniciar
+// Cargar clave guardada
 const savedKey = localStorage.getItem('anthropic_key');
 if (savedKey) {
   apiKey = savedKey;
   document.getElementById('key-pill').style.display = 'none';
-  document.getElementById('key-status').style.display = 'block';
+  document.getElementById('key-status').classList.add('visible');
 }
 
 // Waveform
-let audioCtx      = null;
-let analyser      = null;
-let waveRAF       = null;
-let micStream     = null;
+let audioCtx = null;
+let analyser = null;
+let waveRAF = null;
+let micStream = null;
 
 // ════════════════════════════════════════════════════════════
 //  API KEY
@@ -407,7 +474,7 @@ function saveKey() {
   apiKey = k;
   localStorage.setItem('anthropic_key', k);
   document.getElementById('key-pill').style.display = 'none';
-  document.getElementById('key-status').style.display = 'block';
+  document.getElementById('key-status').classList.add('visible');
   showToast('API Key guardada ✓');
 }
 
@@ -424,19 +491,19 @@ function showScreen(id) {
 //  WAVEFORM
 // ════════════════════════════════════════════════════════════
 function startWaveform(stream) {
-  audioCtx  = new (window.AudioContext || window.webkitAudioContext)();
-  analyser  = audioCtx.createAnalyser();
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  analyser = audioCtx.createAnalyser();
   analyser.fftSize = 256;
   const src = audioCtx.createMediaStreamSource(stream);
   src.connect(analyser);
 
   const canvas = document.getElementById('waveform');
-  const ctx    = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d');
   document.getElementById('wave-idle').style.display = 'none';
 
   function draw() {
     waveRAF = requestAnimationFrame(draw);
-    canvas.width  = canvas.offsetWidth;
+    canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
     const data = new Uint8Array(analyser.frequencyBinCount);
     analyser.getByteFrequencyData(data);
@@ -459,7 +526,7 @@ function stopWaveform() {
   if (waveRAF) { cancelAnimationFrame(waveRAF); waveRAF = null; }
   if (audioCtx) { audioCtx.close(); audioCtx = null; }
   const canvas = document.getElementById('waveform');
-  const ctx    = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   document.getElementById('wave-idle').style.display = 'flex';
 }
@@ -495,18 +562,18 @@ async function toggleRecording() {
 
 async function startRecording() {
   if (!navigator.mediaDevices) {
-    setStatus('Tu navegador no soporta grabación de audio.', 'err');
+    setStatus('Tu navegador no soporta grabación.', 'err');
     return;
   }
   try {
     micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  } catch(e) {
-    setStatus('Permiso de micrófono denegado. Habilítalo en tu navegador.', 'err');
+  } catch (e) {
+    setStatus('Permiso de micrófono denegado.', 'err');
     return;
   }
 
   audioChunks = [];
-  const mimeType = ['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/mp4']
+  const mimeType = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4']
     .find(m => MediaRecorder.isTypeSupported(m)) || '';
   mediaRecorder = new MediaRecorder(micStream, mimeType ? { mimeType } : {});
   mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
@@ -522,7 +589,7 @@ async function startRecording() {
   btn.textContent = '⏹';
   document.getElementById('timer-label').textContent = 'Grabando…';
   document.getElementById('timer-label').classList.add('active');
-  setStatus('Grabando la reunión… Presiona ⏹ para detener', 'recording');
+  setStatus('Grabando… Presiona ⏹ para detener', 'recording');
   document.getElementById('playback-wrap').classList.remove('visible');
   document.getElementById('transcript-wrap').classList.remove('visible');
   document.getElementById('gen-btn').classList.remove('visible');
@@ -560,7 +627,7 @@ async function onRecordingStop() {
   document.getElementById('new-btn').classList.add('visible');
 
   if (!apiKey) {
-    setStatus('Grabación lista. Ingresa tu API Key para transcribir automáticamente.', 'done');
+    setStatus('Grabación lista. Ingresa API Key para transcribir.', 'done');
     document.getElementById('transcript-wrap').classList.add('visible');
     document.getElementById('transcript-badge').textContent = '';
     document.getElementById('gen-btn').classList.add('visible');
@@ -574,16 +641,16 @@ async function onRecordingStop() {
     document.getElementById('transcript-badge').textContent = '✓ Lista';
     document.getElementById('transcript-wrap').classList.add('visible');
     document.getElementById('gen-btn').classList.add('visible');
-    setStatus('Transcripción completa. Revísala y genera la minuta.', 'done');
-  } catch(e) {
-    setStatus(`Error al transcribir: ${e.message}`, 'err');
+    setStatus('Transcripción lista. Genera la minuta.', 'done');
+  } catch (e) {
+    setStatus(`Error: ${e.message}`, 'err');
     document.getElementById('transcript-wrap').classList.add('visible');
     document.getElementById('gen-btn').classList.add('visible');
   }
 }
 
 // ════════════════════════════════════════════════════════════
-//  TRANSCRIPTION via Claude Audio API
+//  TRANSCRIPTION (Claude Audio)
 // ════════════════════════════════════════════════════════════
 async function transcribeAudio(blob) {
   const b64 = await blobToBase64(blob);
@@ -607,10 +674,7 @@ Entrega solo la transcripción limpia, sin comentarios adicionales.`,
       messages: [{
         role: 'user',
         content: [
-          {
-            type: 'audio',
-            source: { type: 'base64', media_type: mediaType, data: b64 }
-          },
+          { type: 'audio', source: { type: 'base64', media_type: mediaType, data: b64 } },
           { type: 'text', text: 'Transcribe esta grabación de reunión jurídica.' }
         ]
       }]
@@ -626,7 +690,7 @@ Entrega solo la transcripción limpia, sin comentarios adicionales.`,
 }
 
 // ════════════════════════════════════════════════════════════
-//  GENERATE MINUTA via Claude
+//  GENERATE MINUTA
 // ════════════════════════════════════════════════════════════
 async function generateMinuta() {
   const transcript = document.getElementById('transcript').value.trim();
@@ -636,12 +700,12 @@ async function generateMinuta() {
   }
 
   const btn = document.getElementById('gen-btn');
-  btn.textContent = 'Generando minuta…';
+  btn.textContent = '⏳ Generando…';
   btn.disabled = true;
-  setStatus('Generando minuta jurídica con IA…', 'processing');
+  setStatus('Generando minuta…', 'processing');
 
-  const fecha = new Date().toLocaleDateString('es-CL', { day:'2-digit', month:'2-digit', year:'numeric' });
-  const hora  = new Date().toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' });
+  const fecha = new Date().toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const hora = new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
 
   let minutaText = '';
 
@@ -729,10 +793,7 @@ Tareas pendientes: [tareas]
 ================================================================
 
 Responde SOLO con la minuta, sin explicaciones adicionales.`,
-          messages: [{
-            role: 'user',
-            content: `Aquí está la transcripción de la reunión:\n\n${transcript}`
-          }]
+          messages: [{ role: 'user', content: `Aquí está la transcripción:\n\n${transcript}` }]
         })
       });
 
@@ -742,16 +803,16 @@ Responde SOLO con la minuta, sin explicaciones adicionales.`,
       }
       const data = await res.json();
       minutaText = data.content?.map(c => c.text || '').join('').trim();
-    } catch(e) {
+    } catch (e) {
       minutaText = buildBasicMinuta(transcript, fecha, hora);
-      showToast(`IA no disponible, minuta básica generada`);
+      showToast('IA no disponible, minuta básica generada');
     }
   }
 
   document.getElementById('minuta-doc').textContent = minutaText;
   btn.textContent = 'Generar Minuta →';
   btn.disabled = false;
-  setStatus('Minuta generada.', 'done');
+  setStatus('Minuta generada ✓', 'done');
   showScreen('minuta');
 }
 
@@ -785,19 +846,19 @@ function resetRecorder() {
   document.getElementById('new-btn').classList.remove('visible');
   document.getElementById('transcript-badge').textContent = '';
   document.getElementById('wave-idle').style.display = 'flex';
-  setStatus('Presiona el botón para comenzar a grabar la reunión', '');
+  setStatus('Presiona el botón para comenzar', '');
 }
 
 function setStatus(msg, type) {
   const el = document.getElementById('status');
   el.textContent = msg;
-  el.className = `status-line ${type}`;
+  el.className = `status-line ${type || ''}`;
 }
 
 function blobToBase64(blob) {
   return new Promise((res, rej) => {
     const r = new FileReader();
-    r.onload  = () => res(r.result.split(',')[1]);
+    r.onload = () => res(r.result.split(',')[1]);
     r.onerror = rej;
     r.readAsDataURL(blob);
   });
@@ -809,17 +870,18 @@ function copyMinuta() {
 }
 
 function downloadMinuta() {
-  const txt  = document.getElementById('minuta-doc').textContent;
-  const date = new Date().toLocaleDateString('es-CL').replace(/\//g,'-');
-  const a    = document.createElement('a');
-  a.href     = URL.createObjectURL(new Blob([txt], { type:'text/plain;charset=utf-8' }));
+  const txt = document.getElementById('minuta-doc').textContent;
+  const date = new Date().toLocaleDateString('es-CL').replace(/\//g, '-');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain;charset=utf-8' }));
   a.download = `minuta_${date}.txt`;
   a.click();
 }
 
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
+  t.textContent = msg;
+  t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 </script>
