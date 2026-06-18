@@ -381,10 +381,10 @@ textarea#transcript {
 
 <script>
 // ════════════════════════════════════════════════════════════
-// 1. CLAVES API FIJAS (REEMPLAZA CON TUS CLAVES REALES)
+// 1. CLAVES API FIJAS (YA INCLUIDAS)
 // ════════════════════════════════════════════════════════════
-const API_KEY_OPENAI = "sk-proj-01msj1CyljAyCc";       // <-- REEMPLAZA CON TU CLAVE
-const API_KEY_ANTHROPIC = "sk-ant-api03-otnki4";       // <-- REEMPLAZA CON TU CLAVE
+const API_KEY_OPENAI = "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";
+const API_KEY_ANTHROPIC = "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";
 
 // ════════════════════════════════════════════════════════════
 // 2. VARIABLES DE ESTADO
@@ -537,6 +537,9 @@ function stopRecording() {
   setStatus('Procesando el audio…', 'processing');
 }
 
+// ════════════════════════════════════════════════════════════
+// 7. onRecordingStop (CORREGIDO)
+// ════════════════════════════════════════════════════════════
 async function onRecordingStop() {
   audioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
 
@@ -553,50 +556,87 @@ async function onRecordingStop() {
   document.getElementById('transcript-wrap').classList.add('visible');
   document.getElementById('gen-btn').classList.add('visible');
 
+  // Verificar que la clave de OpenAI no sea la de ejemplo
+  if (!API_KEY_OPENAI || API_KEY_OPENAI.length < 20) {
+    setStatus('❌ Clave de OpenAI no configurada o incompleta.', 'err');
+    document.getElementById('transcript-badge').textContent = '⚠️ Sin clave';
+    return;
+  }
+
   // Intentar transcripción automática
   setStatus('🔊 Transcribiendo con OpenAI Whisper…', 'processing');
   document.getElementById('transcript-badge').textContent = '⏳ Transcribiendo…';
   try {
     const transcript = await Promise.race([
       transcribeAudio(audioBlob),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('Tiempo de espera agotado (30s)')), 30000))
+      new Promise((_, reject) => setTimeout(() => reject(new Error('⏰ Tiempo de espera agotado (30s)')), 30000))
     ]);
     document.getElementById('transcript').value = transcript;
     document.getElementById('transcript-badge').textContent = '✓ Lista';
-    setStatus('Transcripción automática completada. Revisa y genera la minuta.', 'done');
+    setStatus('✅ Transcripción automática completada.', 'done');
     document.getElementById('retry-btn').classList.remove('visible');
   } catch (e) {
-    setStatus(`❌ Error: ${e.message}. Puedes reintentar.`, 'err');
+    console.error('❌ Error en onRecordingStop:', e);
+    setStatus(`❌ Error: ${e.message}`, 'err');
     document.getElementById('transcript-badge').textContent = '⚠️ Falló';
     document.getElementById('retry-btn').classList.add('visible');
   }
 }
 
 // ════════════════════════════════════════════════════════════
-// 7. TRANSCRIPCIÓN CON OPENAI (CORREGIDO)
+// 8. TRANSCRIPCIÓN CON OPENAI (CORREGIDA Y ROBUSTA)
 // ════════════════════════════════════════════════════════════
 async function transcribeAudio(blob) {
+  // Validar clave
+  if (!API_KEY_OPENAI || API_KEY_OPENAI.length < 20) {
+    throw new Error('❌ La clave de OpenAI no es válida. Reemplázala en el código.');
+  }
+
+  // Crear FormData
   const formData = new FormData();
+  // Forzar el nombre del archivo con extensión .webm (Whisper lo soporta)
   formData.append('file', blob, 'audio.webm');
   formData.append('model', 'whisper-1');
   formData.append('language', 'es');
+  formData.append('response_format', 'json');
 
-  const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${API_KEY_OPENAI}` },  // <-- BACKTICKS
-    body: formData
-  });
+  console.log('📤 Enviando audio a OpenAI. Tamaño:', blob.size, 'Tipo:', blob.type);
 
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err?.error?.message || `Error HTTP ${res.status}`);
+  try {
+    const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${API_KEY_OPENAI}` },
+      body: formData
+    });
+
+    console.log('📥 Respuesta de OpenAI:', res.status, res.statusText);
+
+    if (!res.ok) {
+      let errorMsg = `Error HTTP ${res.status}`;
+      try {
+        const errorData = await res.json();
+        console.error('❌ Error detallado de OpenAI:', errorData);
+        errorMsg = errorData?.error?.message || errorMsg;
+      } catch (e) {
+        // Si no se puede parsear JSON, usamos el texto
+        const text = await res.text();
+        console.error('❌ Respuesta no JSON:', text);
+        errorMsg = text || errorMsg;
+      }
+      throw new Error(errorMsg);
+    }
+
+    const data = await res.json();
+    console.log('✅ Transcripción recibida:', data);
+    return data.text || '';
+  } catch (error) {
+    console.error('❌ Falló la transcripción:', error);
+    throw error;
   }
-  const data = await res.json();
-  return data.text || '';
 }
 
 // ════════════════════════════════════════════════════════════
-// 8. REINTENTAR TRANSCRIPCIÓN
+// 9. REINTENTAR TRANSCRIPCIÓN
 // ════════════════════════════════════════════════════════════
 async function retryTranscription() {
   if (!audioBlob) {
@@ -622,7 +662,7 @@ async function retryTranscription() {
 }
 
 // ════════════════════════════════════════════════════════════
-// 9. GENERAR MINUTA CON ANTHROPIC
+// 10. GENERAR MINUTA CON ANTHROPIC
 // ════════════════════════════════════════════════════════════
 async function generateMinuta() {
   const transcript = document.getElementById('transcript').value.trim();
@@ -758,7 +798,7 @@ ${transcript}
 }
 
 // ════════════════════════════════════════════════════════════
-// 10. UTILIDADES
+// 11. UTILIDADES
 // ════════════════════════════════════════════════════════════
 function resetRecorder() {
   audioBlob = null;
