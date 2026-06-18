@@ -30,100 +30,22 @@ body {
 }
 
 header {
-  padding: 0.8rem 1rem;
+  padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--border);
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
+  flex-shrink: 0;
   background: rgba(0,0,0,0.2);
+  flex-wrap: wrap;
 }
 .brand {
   font-family: 'EB Garamond', serif;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   letter-spacing: 0.02em;
 }
 .brand em { color: var(--gold); font-style: normal; }
 
-#key-area {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.4rem;
-}
-.key-pill {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.3rem;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 0.3rem 0.5rem;
-}
-.key-pill input {
-  background: transparent;
-  border: none;
-  outline: none;
-  color: var(--cream);
-  font-family: monospace;
-  font-size: 0.7rem;
-  width: 110px;
-}
-.key-pill input::placeholder { color: var(--dim); }
-.key-btn {
-  background: var(--gold);
-  color: white;
-  border: none;
-  border-radius: 14px;
-  padding: 0.2rem 0.6rem;
-  font-size: 0.65rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-.key-btn:hover { opacity: 0.85; }
-#key-status {
-  display: none;
-  font-size: 0.7rem;
-  color: #86efac;
-  font-weight: 500;
-  white-space: nowrap;
-}
-#key-status.visible { display: block; }
-
-/* Responsive: en móviles, los inputs se apilan */
-@media (max-width: 480px) {
-  header {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  #key-area {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .key-pill {
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 0.4rem;
-    border-radius: 12px;
-  }
-  .key-pill input {
-    width: 100%;
-    max-width: 160px;
-    font-size: 0.7rem;
-    text-align: center;
-  }
-  .key-btn {
-    width: auto;
-    padding: 0.3rem 1rem;
-  }
-  #key-status {
-    text-align: center;
-  }
-}
-
-/* Resto de estilos (waveform, botones, etc.) */
 main {
   flex: 1;
   display: flex;
@@ -134,8 +56,10 @@ main {
   width: 100%;
   margin: 0 auto;
 }
+
 .screen { display: none; width: 100%; }
 .screen.active { display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
+
 .wave-wrap {
   width: 100%;
   height: 80px;
@@ -145,7 +69,11 @@ main {
   overflow: hidden;
   position: relative;
 }
-canvas#waveform { width: 100%; height: 100%; display: block; }
+canvas#waveform {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
 .wave-idle {
   position: absolute;
   inset: 0;
@@ -156,6 +84,7 @@ canvas#waveform { width: 100%; height: 100%; display: block; }
   color: var(--dim);
   pointer-events: none;
 }
+
 .timer {
   font-size: 2.8rem;
   font-weight: 300;
@@ -172,6 +101,7 @@ canvas#waveform { width: 100%; height: 100%; display: block; }
   margin-top: -0.8rem;
 }
 .timer-label.active { color: var(--rec); }
+
 .rec-ring {
   width: 110px;
   height: 110px;
@@ -207,6 +137,7 @@ canvas#waveform { width: 100%; height: 100%; display: block; }
   cursor: not-allowed;
   animation: none;
 }
+
 .status-line {
   font-size: 0.8rem;
   color: var(--dim);
@@ -217,6 +148,7 @@ canvas#waveform { width: 100%; height: 100%; display: block; }
 .status-line.done { color: #86efac; }
 .status-line.err { color: #fca5a5; }
 .status-line.processing { color: var(--gold); }
+
 .playback-wrap {
   width: 100%;
   background: rgba(255,255,255,0.04);
@@ -236,6 +168,7 @@ canvas#waveform { width: 100%; height: 100%; display: block; }
   color: var(--dim);
 }
 audio { width: 100%; border-radius: 6px; }
+
 .transcript-wrap {
   width: 100%;
   background: rgba(255,255,255,0.03);
@@ -270,6 +203,7 @@ textarea#transcript {
   resize: vertical;
   min-height: 100px;
 }
+
 .gen-btn {
   width: 100%;
   padding: 0.8rem;
@@ -284,6 +218,7 @@ textarea#transcript {
 }
 .gen-btn.visible { display: block; }
 .gen-btn:hover { opacity: 0.88; }
+
 .new-btn {
   background: transparent;
   border: 1px solid var(--border);
@@ -297,6 +232,7 @@ textarea#transcript {
 }
 .new-btn.visible { display: inline-block; }
 .new-btn:hover { border-color: var(--cream); color: var(--cream); }
+
 .retry-btn {
   background: var(--gold);
   border: none;
@@ -310,6 +246,7 @@ textarea#transcript {
 }
 .retry-btn.visible { display: inline-block; }
 .retry-btn:hover { opacity: 0.85; }
+
 .minuta-screen {
   background: var(--paper);
   border-radius: 12px;
@@ -358,6 +295,7 @@ textarea#transcript {
   color: white;
 }
 .tbtn-dl:hover { opacity: 0.88; }
+
 .minuta-doc {
   padding: 1.5rem 2rem;
   font-family: 'EB Garamond', serif;
@@ -368,6 +306,7 @@ textarea#transcript {
   min-height: 250px;
 }
 @media(max-width:520px){ .minuta-doc { padding: 1rem; } }
+
 .toast {
   position: fixed;
   bottom: 1.5rem;
@@ -386,6 +325,7 @@ textarea#transcript {
   z-index: 999;
 }
 .toast.show { opacity: 1; }
+
 @media(max-width:480px){
   .rec-btn { width: 72px; height: 72px; font-size: 1.5rem; }
   .rec-ring { width: 90px; height: 90px; }
@@ -394,61 +334,35 @@ textarea#transcript {
 </style>
 </head>
 <body>
-
 <header>
   <div class="brand">⚖ Minutas<em>Jurídicas</em></div>
-  <div id="key-area">
-    <div class="key-pill" id="key-pill">
-      <input type="password" id="api-key-openai" placeholder="OpenAI Key" value=""/>
-      <input type="password" id="api-key-anthropic" placeholder="Anthropic Key" value=""/>
-      <button class="key-btn" onclick="saveKeys()">Guardar</button>
-    </div>
-    <span id="key-status">● Conectado</span>
-  </div>
 </header>
-
 <main>
   <div class="screen active" id="screen-rec">
     <div class="wave-wrap">
       <canvas id="waveform"></canvas>
       <div class="wave-idle" id="wave-idle">El audio aparecerá aquí al grabar</div>
     </div>
-
     <div class="timer" id="timer">00:00</div>
     <div class="timer-label" id="timer-label">Listo para grabar</div>
-
     <div class="rec-ring">
       <button class="rec-btn" id="rec-btn" onclick="toggleRecording()">🎙</button>
     </div>
-
     <div class="status-line" id="status">Presiona el botón para comenzar</div>
-
     <div class="playback-wrap" id="playback-wrap">
       <div class="playback-label">🎧 Escuchar grabación</div>
       <audio id="audio-player" controls></audio>
     </div>
-
     <div class="transcript-wrap" id="transcript-wrap">
       <div class="transcript-head">
         📝 Transcripción <span id="transcript-badge"></span>
       </div>
       <textarea id="transcript" placeholder="La transcripción aparecerá automáticamente al grabar…"></textarea>
     </div>
-
-    <div style="display:flex; gap:0.5rem; width:100%; flex-wrap:wrap; justify-content:center;">
-      <button class="retry-btn" id="retry-btn" onclick="retryTranscription()">
-        🔄 Reintentar transcripción
-      </button>
-    </div>
-
-    <button class="gen-btn" id="gen-btn" onclick="generateMinuta()">
-      Generar Minuta →
-    </button>
-    <button class="new-btn" id="new-btn" onclick="resetRecorder()">
-      + Nueva grabación
-    </button>
+    <button class="retry-btn" id="retry-btn" onclick="retryTranscription()">🔄 Reintentar transcripción</button>
+    <button class="gen-btn" id="gen-btn" onclick="generateMinuta()">Generar Minuta →</button>
+    <button class="new-btn" id="new-btn" onclick="resetRecorder()">+ Nueva grabación</button>
   </div>
-
   <div class="screen" id="screen-minuta">
     <div class="minuta-screen">
       <div class="minuta-toolbar">
@@ -463,53 +377,18 @@ textarea#transcript {
     </div>
   </div>
 </main>
-
 <div class="toast" id="toast"></div>
 
 <script>
 // ════════════════════════════════════════════════════════════
-// 1. CARGAR CLAVES GUARDADAS AL INICIAR (Y RELLENAR INPUTS)
+// 1. CLAVES API FIJAS (REEMPLAZA CON TUS CLAVES REALES)
 // ════════════════════════════════════════════════════════════
-let apiKeyOpenAI = localStorage.getItem('openai_key') || '';
-let apiKeyAnthropic = localStorage.getItem('anthropic_key') || '';
-
-// Rellenar los inputs con las claves guardadas (si existen)
-document.getElementById('api-key-openai').value = apiKeyOpenAI;
-document.getElementById('api-key-anthropic').value = apiKeyAnthropic;
-
-// Mostrar "Conectado" si ambas claves están presentes
-if (apiKeyOpenAI && apiKeyAnthropic) {
-  document.getElementById('key-status').classList.add('visible');
-}
+const API_KEY_OPENAI = "sk-proj-01msj1CyljAyCc";       // <-- REEMPLAZA CON TU CLAVE
+const API_KEY_ANTHROPIC = "sk-ant-api03-otnki4";       // <-- REEMPLAZA CON TU CLAVE
 
 // ════════════════════════════════════════════════════════════
-// 2. GUARDAR CLAVES (actualiza localStorage y el estado)
+// 2. VARIABLES DE ESTADO
 // ════════════════════════════════════════════════════════════
-function saveKeys() {
-  const openai = document.getElementById('api-key-openai').value.trim();
-  const anthropic = document.getElementById('api-key-anthropic').value.trim();
-  if (openai) {
-    apiKeyOpenAI = openai;
-    localStorage.setItem('openai_key', openai);
-  }
-  if (anthropic) {
-    apiKeyAnthropic = anthropic;
-    localStorage.setItem('anthropic_key', anthropic);
-  }
-  // Actualizar estado visual
-  if (apiKeyOpenAI && apiKeyAnthropic) {
-    document.getElementById('key-status').classList.add('visible');
-  } else {
-    document.getElementById('key-status').classList.remove('visible');
-  }
-  showToast('Claves guardadas ✓');
-}
-
-// ════════════════════════════════════════════════════════════
-// 3. RESTO DE FUNCIONES (grabación, waveform, transcripción, minuta)
-// ════════════════════════════════════════════════════════════
-
-// Variables de estado
 let mediaRecorder = null;
 let audioChunks = [];
 let audioBlob = null;
@@ -521,14 +400,18 @@ let analyser = null;
 let waveRAF = null;
 let micStream = null;
 
-// Cambio de pantalla
+// ════════════════════════════════════════════════════════════
+// 3. FUNCIONES DE PANTALLA
+// ════════════════════════════════════════════════════════════
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(`screen-${id}`).classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Waveform
+// ════════════════════════════════════════════════════════════
+// 4. WAVEFORM
+// ════════════════════════════════════════════════════════════
 function startWaveform(stream) {
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   analyser = audioCtx.createAnalyser();
@@ -570,7 +453,9 @@ function stopWaveform() {
   document.getElementById('wave-idle').style.display = 'flex';
 }
 
-// Timer
+// ════════════════════════════════════════════════════════════
+// 5. TIMER
+// ════════════════════════════════════════════════════════════
 function startTimer() {
   seconds = 0;
   updateTimerDisplay();
@@ -586,7 +471,9 @@ function updateTimerDisplay() {
   document.getElementById('timer').textContent = `${m}:${s}`;
 }
 
-// Recording
+// ════════════════════════════════════════════════════════════
+// 6. GRABACIÓN
+// ════════════════════════════════════════════════════════════
 async function toggleRecording() {
   if (isRecording) {
     stopRecording();
@@ -666,13 +553,6 @@ async function onRecordingStop() {
   document.getElementById('transcript-wrap').classList.add('visible');
   document.getElementById('gen-btn').classList.add('visible');
 
-  // Si no hay clave OpenAI, mostrar mensaje
-  if (!apiKeyOpenAI) {
-    setStatus('⚠️ Ingresa tu clave de OpenAI para transcripción automática.', 'err');
-    document.getElementById('transcript-badge').textContent = '✏️ Sin clave';
-    return;
-  }
-
   // Intentar transcripción automática
   setStatus('🔊 Transcribiendo con OpenAI Whisper…', 'processing');
   document.getElementById('transcript-badge').textContent = '⏳ Transcribiendo…';
@@ -692,10 +572,10 @@ async function onRecordingStop() {
   }
 }
 
-// Transcripción con OpenAI Whisper
+// ════════════════════════════════════════════════════════════
+// 7. TRANSCRIPCIÓN CON OPENAI (CORREGIDO)
+// ════════════════════════════════════════════════════════════
 async function transcribeAudio(blob) {
-  if (!apiKeyOpenAI) throw new Error('No hay clave de OpenAI.');
-
   const formData = new FormData();
   formData.append('file', blob, 'audio.webm');
   formData.append('model', 'whisper-1');
@@ -703,7 +583,7 @@ async function transcribeAudio(blob) {
 
   const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
     method: 'POST',
-    headers: { 'Authorization': `Bearer ${apiKeyOpenAI}` },
+    headers: { 'Authorization': `Bearer ${API_KEY_OPENAI}` },  // <-- BACKTICKS
     body: formData
   });
 
@@ -715,14 +595,12 @@ async function transcribeAudio(blob) {
   return data.text || '';
 }
 
-// Reintentar transcripción
+// ════════════════════════════════════════════════════════════
+// 8. REINTENTAR TRANSCRIPCIÓN
+// ════════════════════════════════════════════════════════════
 async function retryTranscription() {
   if (!audioBlob) {
     showToast('No hay audio grabado. Graba primero.');
-    return;
-  }
-  if (!apiKeyOpenAI) {
-    showToast('Ingresa tu clave de OpenAI.');
     return;
   }
   document.getElementById('retry-btn').classList.remove('visible');
@@ -743,11 +621,13 @@ async function retryTranscription() {
   }
 }
 
-// Generar minuta con Anthropic
+// ════════════════════════════════════════════════════════════
+// 9. GENERAR MINUTA CON ANTHROPIC
+// ════════════════════════════════════════════════════════════
 async function generateMinuta() {
   const transcript = document.getElementById('transcript').value.trim();
   if (!transcript) {
-    showToast('Primero transcribe el audio o escribe el texto.');
+    showToast('Primero transcribe el audio.');
     return;
   }
 
@@ -759,23 +639,18 @@ async function generateMinuta() {
   const fecha = new Date().toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric' });
   const hora = new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
 
-  let minutaText = '';
-
-  if (!apiKeyAnthropic) {
-    minutaText = buildBasicMinuta(transcript, fecha, hora);
-  } else {
-    try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKeyAnthropic,
-          'anthropic-version': '2023-06-01'
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 2000,
-          system: `Eres un abogado chileno experto en redactar minutas de audiencia de juicio.
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': API_KEY_ANTHROPIC,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 2000,
+        system: `Eres un abogado chileno experto en redactar minutas de audiencia de juicio.
 A partir de la transcripción, extrae la información relevante y redacta una minuta formal.
 
 La minuta DEBE tener exactamente este formato:
@@ -841,27 +716,33 @@ Tareas pendientes: [tareas]
 ================================================================
 
 Responde SOLO con la minuta, sin explicaciones adicionales.`,
-          messages: [{ role: 'user', content: `Aquí está la transcripción:\n\n${transcript}` }]
-        })
-      });
+        messages: [{ role: 'user', content: `Aquí está la transcripción:\n\n${transcript}` }]
+      })
+    });
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err?.error?.message || `Error ${res.status}`);
-      }
-      const data = await res.json();
-      minutaText = data.content?.map(c => c.text || '').join('').trim();
-    } catch (e) {
-      minutaText = buildBasicMinuta(transcript, fecha, hora);
-      showToast('⚠️ Error con IA, se generó minuta básica.');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err?.error?.message || `Error ${res.status}`);
     }
-  }
+    const data = await res.json();
+    const minutaText = data.content?.map(c => c.text || '').join('').trim();
 
-  document.getElementById('minuta-doc').textContent = minutaText;
-  btn.textContent = 'Generar Minuta →';
-  btn.disabled = false;
-  setStatus('Minuta generada ✓', 'done');
-  showScreen('minuta');
+    document.getElementById('minuta-doc').textContent = minutaText;
+    btn.textContent = 'Generar Minuta →';
+    btn.disabled = false;
+    setStatus('Minuta generada ✓', 'done');
+    showScreen('minuta');
+
+  } catch (e) {
+    // Fallback: minuta básica
+    const minutaText = buildBasicMinuta(transcript, fecha, hora);
+    document.getElementById('minuta-doc').textContent = minutaText;
+    btn.textContent = 'Generar Minuta →';
+    btn.disabled = false;
+    setStatus('Minuta generada (modo básico)', 'done');
+    showScreen('minuta');
+    showToast('⚠️ Error con IA, minuta básica generada.');
+  }
 }
 
 function buildBasicMinuta(transcript, fecha, hora) {
@@ -876,7 +757,9 @@ ${transcript}
 ================================================================`;
 }
 
-// Utilidades
+// ════════════════════════════════════════════════════════════
+// 10. UTILIDADES
+// ════════════════════════════════════════════════════════════
 function resetRecorder() {
   audioBlob = null;
   audioChunks = [];
@@ -901,13 +784,11 @@ function setStatus(msg, type) {
   el.className = `status-line ${type || ''}`;
 }
 
-function blobToBase64(blob) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result.split(',')[1]);
-    r.onerror = rej;
-    r.readAsDataURL(blob);
-  });
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 
 function copyMinuta() {
@@ -922,13 +803,6 @@ function downloadMinuta() {
   a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain;charset=utf-8' }));
   a.download = `minuta_${date}.txt`;
   a.click();
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
 }
 </script>
 </body>
