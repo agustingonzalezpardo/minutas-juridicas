@@ -92,7 +92,7 @@ header {
 }
 #key-status.visible { display: block; }
 
-/* --- Responsive para móviles --- */
+/* Responsive: en móviles, los inputs se apilan */
 @media (max-width: 480px) {
   header {
     flex-direction: column;
@@ -123,7 +123,7 @@ header {
   }
 }
 
-/* El resto de los estilos (waveform, botones, etc.) se mantienen igual */
+/* Resto de estilos (waveform, botones, etc.) */
 main {
   flex: 1;
   display: flex;
@@ -468,7 +468,7 @@ textarea#transcript {
 
 <script>
 // ════════════════════════════════════════════════════════════
-// 1. CARGAR CLAVES GUARDADAS AL INICIAR
+// 1. CARGAR CLAVES GUARDADAS AL INICIAR (Y RELLENAR INPUTS)
 // ════════════════════════════════════════════════════════════
 let apiKeyOpenAI = localStorage.getItem('openai_key') || '';
 let apiKeyAnthropic = localStorage.getItem('anthropic_key') || '';
@@ -483,7 +483,7 @@ if (apiKeyOpenAI && apiKeyAnthropic) {
 }
 
 // ════════════════════════════════════════════════════════════
-// 2. GUARDAR CLAVES
+// 2. GUARDAR CLAVES (actualiza localStorage y el estado)
 // ════════════════════════════════════════════════════════════
 function saveKeys() {
   const openai = document.getElementById('api-key-openai').value.trim();
@@ -496,6 +496,7 @@ function saveKeys() {
     apiKeyAnthropic = anthropic;
     localStorage.setItem('anthropic_key', anthropic);
   }
+  // Actualizar estado visual
   if (apiKeyOpenAI && apiKeyAnthropic) {
     document.getElementById('key-status').classList.add('visible');
   } else {
@@ -520,7 +521,7 @@ let analyser = null;
 let waveRAF = null;
 let micStream = null;
 
-// Funciones de pantalla
+// Cambio de pantalla
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(`screen-${id}`).classList.add('active');
