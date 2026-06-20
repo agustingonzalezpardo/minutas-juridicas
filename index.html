@@ -143,6 +143,8 @@ canvas#waveform {
   color: var(--dim);
   min-height: 1.2rem;
   text-align: center;
+  padding: 0 0.5rem;
+  word-break: break-word;
 }
 .status-line.recording { color: #fca5a5; }
 .status-line.done { color: #86efac; }
@@ -201,7 +203,7 @@ textarea#transcript {
   line-height: 1.6;
   padding: 0.8rem 1rem;
   resize: vertical;
-  min-height: 100px;
+  min-height: 120px;
 }
 
 .gen-btn {
@@ -381,7 +383,7 @@ textarea#transcript {
 
 <script>
 // ════════════════════════════════════════════════════════════
-// 1. CLAVES API (YA CON CRÉDITO)
+// 1. CLAVES API (YA INCLUIDAS)
 // ════════════════════════════════════════════════════════════
 const API_KEY_OPENAI = "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";
 const API_KEY_ANTHROPIC = "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";
@@ -529,7 +531,7 @@ function stopRecording() {
 }
 
 // ════════════════════════════════════════════════════════════
-// 4. CONVERSIÓN A WAV Y TRANSCRIPCIÓN (DEFINITIVA)
+// 4. CONVERSIÓN A WAV Y TRANSCRIPCIÓN (CON DEPURACIÓN)
 // ════════════════════════════════════════════════════════════
 function audioBufferToWav(buffer) {
   const numChannels = buffer.numberOfChannels;
@@ -571,16 +573,34 @@ function audioBufferToWav(buffer) {
 }
 
 async function transcribeAudio(blob) {
-  // Validar que la clave no esté vacía
-  if (!API_KEY_OPENAI || API_KEY_OPENAI.length < 20) {
-    throw new Error('❌ Clave de OpenAI inválida o incompleta.');
+  console.log('📤 Iniciando transcripción...');
+  setStatus('🔄 Preparando audio...', 'processing');
+
+  // Verificar que el blob no esté vacío
+  if (!blob || blob.size === 0) {
+    throw new Error('El audio está vacío. Graba de nuevo.');
+  }
+  console.log('📊 Tamaño del audio:', blob.size, 'Tipo:', blob.type);
+
+  // Decodificar audio
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const arrayBuffer = await blob.arrayBuffer();
+  let audioBuffer;
+  try {
+    audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+  } catch (decodeError) {
+    console.error('❌ Error decodificando audio:', decodeError);
+    throw new Error('El archivo de audio no se pudo decodificar. Asegúrate de que la grabación tenga contenido.');
+  }
+  console.log('✅ Audio decodificado:', audioBuffer.duration, 'segundos');
+
+  if (audioBuffer.duration < 0.5) {
+    throw new Error('El audio es demasiado corto (menos de 0.5 segundos). Graba al menos 2-3 segundos.');
   }
 
   // Convertir a WAV
-  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  const arrayBuffer = await blob.arrayBuffer();
-  const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
   const wavBlob = audioBufferToWav(audioBuffer);
+  console.log('✅ WAV generado, tamaño:', wavBlob.size);
 
   const formData = new FormData();
   formData.append('file', wavBlob, 'audio.wav');
@@ -588,7 +608,7 @@ async function transcribeAudio(blob) {
   formData.append('language', 'es');
   formData.append('response_format', 'json');
 
-  console.log('📤 Enviando WAV a OpenAI. Tamaño:', wavBlob.size);
+  setStatus('📤 Enviando a OpenAI...', 'processing');
 
   const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
     method: 'POST',
@@ -599,16 +619,13 @@ async function transcribeAudio(blob) {
   console.log('📥 Respuesta de OpenAI:', res.status, res.statusText);
 
   if (!res.ok) {
+    const errorText = await res.text();
+    console.error('❌ Error de OpenAI:', errorText);
     let errorMsg = `Error HTTP ${res.status}`;
     try {
-      const errorData = await res.json();
-      console.error('❌ Error detallado:', errorData);
-      errorMsg = errorData?.error?.message || errorMsg;
-    } catch (e) {
-      const text = await res.text();
-      console.error('❌ Respuesta no JSON:', text);
-      errorMsg = text || errorMsg;
-    }
+      const errorJson = JSON.parse(errorText);
+      errorMsg = errorJson?.error?.message || errorMsg;
+    } catch (e) {}
     throw new Error(errorMsg);
   }
 
@@ -618,7 +635,7 @@ async function transcribeAudio(blob) {
 }
 
 // ════════════════════════════════════════════════════════════
-// 5. onRecordingStop (CON VALIDACIÓN DE CRÉDITO)
+// 5. onRecordingStop (CON MANEJO DE ERRORES MEJORADO)
 // ════════════════════════════════════════════════════════════
 async function onRecordingStop() {
   audioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
@@ -635,16 +652,9 @@ async function onRecordingStop() {
   document.getElementById('transcript-wrap').classList.add('visible');
   document.getElementById('gen-btn').classList.add('visible');
 
-  // Verificar que la clave no sea la de ejemplo
-  if (!API_KEY_OPENAI || API_KEY_OPENAI.length < 20) {
-    setStatus('❌ Clave de OpenAI inválida. Reemplázala en el código.', 'err');
-    document.getElementById('transcript-badge').textContent = '⚠️ Clave inválida';
-    return;
-  }
-
   // Intentar transcripción
-  setStatus('🔊 Transcribiendo con OpenAI Whisper (WAV)…', 'processing');
-  document.getElementById('transcript-badge').textContent = '⏳ Transcribiendo…';
+  setStatus('🔊 Transcribiendo...', 'processing');
+  document.getElementById('transcript-badge').textContent = '⏳...';
   try {
     const transcript = await Promise.race([
       transcribeAudio(audioBlob),
@@ -652,12 +662,15 @@ async function onRecordingStop() {
     ]);
     document.getElementById('transcript').value = transcript;
     document.getElementById('transcript-badge').textContent = '✓ Lista';
-    setStatus('✅ Transcripción completada. Revisa y genera la minuta.', 'done');
-    document.getElementById('retry-btn').classList.remove('visible');
+    setStatus('✅ Transcripción completada.', 'done');
   } catch (e) {
-    console.error('❌ Error en transcripción:', e);
-    setStatus(`❌ Error: ${e.message}`, 'err');
+    // Mostrar error detallado en la interfaz
+    const errorMsg = `❌ ${e.message}`;
+    console.error('Error en onRecordingStop:', e);
+    setStatus(errorMsg, 'err');
     document.getElementById('transcript-badge').textContent = '⚠️ Falló';
+    // Mostrar el error en el área de transcripción para que el usuario lo vea
+    document.getElementById('transcript').value = `Error: ${e.message}\n\nPor favor, escribe la transcripción manualmente o presiona "Reintentar".`;
     document.getElementById('retry-btn').classList.add('visible');
   }
 }
@@ -667,13 +680,12 @@ async function onRecordingStop() {
 // ════════════════════════════════════════════════════════════
 async function retryTranscription() {
   if (!audioBlob) {
-    showToast('No hay audio grabado. Graba primero.');
+    showToast('No hay audio grabado.');
     return;
   }
   document.getElementById('retry-btn').classList.remove('visible');
-  document.getElementById('transcript-badge').textContent = '⏳ Reintentando…';
-  setStatus('Reintentando transcripción (WAV)…', 'processing');
-
+  document.getElementById('transcript-badge').textContent = '⏳ Reintentando...';
+  setStatus('Reintentando...', 'processing');
   try {
     const transcript = await Promise.race([
       transcribeAudio(audioBlob),
@@ -683,8 +695,9 @@ async function retryTranscription() {
     document.getElementById('transcript-badge').textContent = '✓ Lista';
     setStatus('✅ Transcripción completada.', 'done');
   } catch (e) {
-    setStatus(`❌ Error: ${e.message}`, 'err');
+    setStatus(`❌ ${e.message}`, 'err');
     document.getElementById('transcript-badge').textContent = '⚠️ Falló';
+    document.getElementById('transcript').value = `Error: ${e.message}\n\nIntenta grabar de nuevo o escribe manualmente.`;
     document.getElementById('retry-btn').classList.add('visible');
   }
 }
