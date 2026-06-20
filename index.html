@@ -6,7 +6,6 @@
   <title>Minutas Jurídicas · Grabadora</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
-
     :root {
       --navy: #0f1a2e;
       --gold: #b8942a;
@@ -16,370 +15,74 @@
       --dim: #94a3b8;
       --border: rgba(255,255,255,0.08);
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--navy);
-      color: var(--cream);
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    header {
-      padding: 1rem 1.5rem;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
-      background: rgba(0,0,0,0.2);
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-    .brand {
-      font-family: 'EB Garamond', serif;
-      font-size: 1.2rem;
-      letter-spacing: 0.02em;
-    }
+    body { font-family: 'Inter', sans-serif; background: var(--navy); color: var(--cream); display: flex; flex-direction: column; min-height: 100vh; }
+    header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; background: rgba(0,0,0,0.2); flex-wrap: wrap; gap: 0.5rem; }
+    .brand { font-family: 'EB Garamond', serif; font-size: 1.2rem; letter-spacing: 0.02em; }
     .brand em { color: var(--gold); font-style: normal; }
-
-    #key-area {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    .key-pill {
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 0.2rem 0.2rem 0.2rem 0.7rem;
-      flex-wrap: wrap;
-    }
-    .key-pill input {
-      background: transparent;
-      border: none;
-      outline: none;
-      color: var(--cream);
-      font-family: monospace;
-      font-size: 0.7rem;
-      width: 140px;
-    }
+    #key-area { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .key-pill { display: flex; align-items: center; gap: 0.3rem; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 20px; padding: 0.2rem 0.2rem 0.2rem 0.7rem; }
+    .key-pill input { background: transparent; border: none; outline: none; color: var(--cream); font-family: monospace; font-size: 0.7rem; width: 140px; }
     .key-pill input::placeholder { color: var(--dim); }
-    .key-btn {
-      background: var(--gold);
-      color: white;
-      border: none;
-      border-radius: 14px;
-      padding: 0.2rem 0.6rem;
-      font-size: 0.65rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
+    .key-btn { background: var(--gold); color: white; border: none; border-radius: 14px; padding: 0.2rem 0.6rem; font-size: 0.65rem; font-weight: 700; cursor: pointer; }
     .key-btn:hover { opacity: 0.85; }
-    #key-status {
-      display: none;
-      font-size: 0.7rem;
-      color: #86efac;
-      font-weight: 500;
-    }
+    #key-status { display: none; font-size: 0.7rem; color: #86efac; font-weight: 500; }
     #key-status.visible { display: block; }
-
-    main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 1.5rem 1rem 2rem;
-      max-width: 640px;
-      width: 100%;
-      margin: 0 auto;
-    }
-
+    main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 1.5rem 1rem 2rem; max-width: 640px; width: 100%; margin: 0 auto; }
     .screen { display: none; width: 100%; }
     .screen.active { display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
-
-    .wave-wrap {
-      width: 100%;
-      height: 80px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-      position: relative;
-    }
-    canvas#waveform {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-    .wave-idle {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      color: var(--dim);
-      pointer-events: none;
-    }
-
-    .timer {
-      font-size: 2.8rem;
-      font-weight: 300;
-      letter-spacing: 0.06em;
-      font-variant-numeric: tabular-nums;
-      margin-top: -0.5rem;
-    }
-    .timer-label {
-      font-size: 0.65rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--dim);
-      margin-top: -0.8rem;
-    }
+    .wave-wrap { width: 100%; height: 80px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; position: relative; }
+    canvas#waveform { width: 100%; height: 100%; display: block; }
+    .wave-idle { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--dim); pointer-events: none; }
+    .timer { font-size: 2.8rem; font-weight: 300; letter-spacing: 0.06em; font-variant-numeric: tabular-nums; margin-top: -0.5rem; }
+    .timer-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); margin-top: -0.8rem; }
     .timer-label.active { color: var(--rec); }
-
-    .rec-ring {
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.08);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-    .rec-btn {
-      width: 88px;
-      height: 88px;
-      border-radius: 50%;
-      border: none;
-      cursor: pointer;
-      background: var(--rec);
-      font-size: 2rem;
-      transition: transform 0.15s, background 0.2s;
-      box-shadow: 0 0 0 0 rgba(220,38,38,0.3);
-    }
+    .rec-ring { width: 110px; height: 110px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; }
+    .rec-btn { width: 88px; height: 88px; border-radius: 50%; border: none; cursor: pointer; background: var(--rec); font-size: 2rem; transition: transform 0.15s, background 0.2s; box-shadow: 0 0 0 0 rgba(220,38,38,0.3); }
     .rec-btn:hover { transform: scale(1.04); }
-    .rec-btn.recording {
-      background: #b91c1c;
-      animation: pulse 1.4s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.5); }
-      50% { box-shadow: 0 0 0 16px rgba(220,38,38,0); }
-    }
-    .rec-btn.processing {
-      background: var(--gold);
-      cursor: not-allowed;
-      animation: none;
-    }
-
-    .status-line {
-      font-size: 0.8rem;
-      color: var(--dim);
-      min-height: 1.2rem;
-      text-align: center;
-      padding: 0 0.5rem;
-      word-break: break-word;
-    }
+    .rec-btn.recording { background: #b91c1c; animation: pulse 1.4s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.5); } 50% { box-shadow: 0 0 0 16px rgba(220,38,38,0); } }
+    .rec-btn.processing { background: var(--gold); cursor: not-allowed; animation: none; }
+    .status-line { font-size: 0.8rem; color: var(--dim); min-height: 1.2rem; text-align: center; padding: 0 0.5rem; word-break: break-word; }
     .status-line.recording { color: #fca5a5; }
     .status-line.done { color: #86efac; }
     .status-line.err { color: #fca5a5; }
     .status-line.processing { color: var(--gold); }
-
-    .playback-wrap {
-      width: 100%;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.8rem 1rem;
-      display: none;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
+    .playback-wrap { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem 1rem; display: none; flex-direction: column; gap: 0.4rem; }
     .playback-wrap.visible { display: flex; }
-    .playback-label {
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--dim);
-    }
+    .playback-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
     audio { width: 100%; border-radius: 6px; }
-
-    .transcript-wrap {
-      width: 100%;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-      display: none;
-    }
+    .transcript-wrap { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; display: none; }
     .transcript-wrap.visible { display: block; }
-    .transcript-head {
-      padding: 0.5rem 1rem;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--dim);
-      display: flex;
-      justify-content: space-between;
-    }
+    .transcript-head { padding: 0.5rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); display: flex; justify-content: space-between; }
     .transcript-head span { color: #86efac; }
-    textarea#transcript {
-      width: 100%;
-      background: transparent;
-      border: none;
-      outline: none;
-      color: var(--cream);
-      font-family: 'Inter', sans-serif;
-      font-size: 0.85rem;
-      line-height: 1.6;
-      padding: 0.8rem 1rem;
-      resize: vertical;
-      min-height: 120px;
-    }
-
-    .gen-btn {
-      width: 100%;
-      padding: 0.8rem;
-      background: var(--gold);
-      border: none;
-      border-radius: 8px;
-      color: white;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: none;
-    }
+    textarea#transcript { width: 100%; background: transparent; border: none; outline: none; color: var(--cream); font-family: 'Inter', sans-serif; font-size: 0.85rem; line-height: 1.6; padding: 0.8rem 1rem; resize: vertical; min-height: 120px; }
+    .gen-btn { width: 100%; padding: 0.8rem; background: var(--gold); border: none; border-radius: 8px; color: white; font-size: 0.95rem; font-weight: 700; cursor: pointer; display: none; }
     .gen-btn.visible { display: block; }
     .gen-btn:hover { opacity: 0.88; }
-
-    .new-btn {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--dim);
-      border-radius: 6px;
-      padding: 0.4rem 1rem;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: none;
-    }
+    .new-btn { background: transparent; border: 1px solid var(--border); color: var(--dim); border-radius: 6px; padding: 0.4rem 1rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: none; }
     .new-btn.visible { display: inline-block; }
     .new-btn:hover { border-color: var(--cream); color: var(--cream); }
-
-    .retry-btn {
-      background: var(--gold);
-      border: none;
-      border-radius: 6px;
-      color: white;
-      padding: 0.4rem 1rem;
-      font-size: 0.75rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: none;
-    }
-    .retry-btn.visible { display: inline-block; }
+    .retry-btn { background: var(--gold); border: none; border-radius: 6px; color: white; padding: 0.5rem 1.2rem; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: none; width: 100%; }
+    .retry-btn.visible { display: block; }
     .retry-btn:hover { opacity: 0.85; }
-
-    .minuta-screen {
-      background: var(--paper);
-      border-radius: 12px;
-      overflow: hidden;
-      width: 100%;
-      color: var(--navy);
-    }
-    .minuta-toolbar {
-      background: var(--navy);
-      padding: 0.7rem 1.2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-    .minuta-toolbar h2 {
-      font-family: 'EB Garamond', serif;
-      font-size: 1rem;
-      color: var(--cream);
-    }
+    .minuta-screen { background: var(--paper); border-radius: 12px; overflow: hidden; width: 100%; color: var(--navy); }
+    .minuta-toolbar { background: var(--navy); padding: 0.7rem 1.2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
+    .minuta-toolbar h2 { font-family: 'EB Garamond', serif; font-size: 1rem; color: var(--cream); }
     .toolbar-btns { display: flex; gap: 0.3rem; flex-wrap: wrap; }
-    .tbtn {
-      padding: 0.3rem 0.8rem;
-      border-radius: 5px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .tbtn-back {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.2);
-      color: var(--dim);
-    }
+    .tbtn { padding: 0.3rem 0.8rem; border-radius: 5px; font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+    .tbtn-back { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--dim); }
     .tbtn-back:hover { border-color: var(--cream); color: var(--cream); }
-    .tbtn-copy {
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.15);
-      color: var(--cream);
-    }
+    .tbtn-copy { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: var(--cream); }
     .tbtn-copy:hover { background: rgba(255,255,255,0.15); }
-    .tbtn-dl {
-      background: var(--gold);
-      border: none;
-      color: white;
-    }
+    .tbtn-dl { background: var(--gold); border: none; color: white; }
     .tbtn-dl:hover { opacity: 0.88; }
-
-    .minuta-doc {
-      padding: 1.5rem 2rem;
-      font-family: 'EB Garamond', serif;
-      font-size: 0.95rem;
-      line-height: 1.8;
-      white-space: pre-wrap;
-      word-break: break-word;
-      min-height: 250px;
-    }
+    .minuta-doc { padding: 1.5rem 2rem; font-family: 'EB Garamond', serif; font-size: 0.95rem; line-height: 1.8; white-space: pre-wrap; word-break: break-word; min-height: 250px; }
     @media(max-width:520px){ .minuta-doc { padding: 1rem; } }
-
-    .toast {
-      position: fixed;
-      bottom: 1.5rem;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1e2d4a;
-      color: var(--cream);
-      border: 1px solid var(--gold);
-      padding: 0.5rem 1.2rem;
-      border-radius: 30px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-      z-index: 999;
-    }
+    .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: #1e2d4a; color: var(--cream); border: 1px solid var(--gold); padding: 0.5rem 1.2rem; border-radius: 30px; font-size: 0.75rem; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 999; }
     .toast.show { opacity: 1; }
-
-    @media(max-width:480px){
-      .rec-btn { width: 72px; height: 72px; font-size: 1.5rem; }
-      .rec-ring { width: 90px; height: 90px; }
-      .timer { font-size: 2.2rem; }
-      .key-pill input { width: 100px; font-size: 0.6rem; }
-    }
+    @media(max-width:480px){ .rec-btn { width: 72px; height: 72px; font-size: 1.5rem; } .rec-ring { width: 90px; height: 90px; } .timer { font-size: 2.2rem; } .key-pill input { width: 100px; font-size: 0.6rem; } }
   </style>
 </head>
 <body>
@@ -387,14 +90,13 @@
     <div class="brand">⚖ Minutas<em>Jurídicas</em></div>
     <div id="key-area">
       <div class="key-pill" id="key-pill">
-        <input type="password" id="api-key-anthropic" placeholder="Clave Anthropic">
+        <input type="password" id="api-key-anthropic" placeholder="Clave Anthropic sk-ant-…">
         <button class="key-btn" onclick="saveKey()">Guardar</button>
       </div>
-      <span id="key-status">● Conectado</span>
+      <span id="key-status">🔑 Conectado</span>
     </div>
   </header>
   <main>
-    <!-- Pantalla de grabación -->
     <div class="screen active" id="screen-rec">
       <div class="wave-wrap">
         <canvas id="waveform"></canvas>
@@ -406,25 +108,21 @@
         <button class="rec-btn" id="rec-btn" onclick="toggleRecording()">🎙</button>
       </div>
       <div class="status-line" id="status">Presiona el botón para comenzar</div>
-
       <div class="playback-wrap" id="playback-wrap">
         <div class="playback-label">🎧 Escuchar grabación</div>
         <audio id="audio-player" controls></audio>
       </div>
-
       <div class="transcript-wrap" id="transcript-wrap">
         <div class="transcript-head">
           📝 Transcripción <span id="transcript-badge"></span>
         </div>
         <textarea id="transcript" placeholder="La transcripción aparecerá automáticamente al grabar…"></textarea>
       </div>
-
       <button class="retry-btn" id="retry-btn" onclick="retryTranscription()">🔄 Reintentar transcripción</button>
       <button class="gen-btn" id="gen-btn" onclick="generateMinuta()">Generar Minuta →</button>
       <button class="new-btn" id="new-btn" onclick="resetRecorder()">+ Nueva grabación</button>
     </div>
 
-    <!-- Pantalla de minuta -->
     <div class="screen" id="screen-minuta">
       <div class="minuta-screen">
         <div class="minuta-toolbar">
@@ -442,78 +140,64 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    // ════════════════════════════════════════════════════════════
-    // 1. GESTIÓN DE CLAVE DE ANTHROPIC (en localStorage)
-    // ════════════════════════════════════════════════════════════
-    let API_KEY_ANTHROPIC = localStorage.getItem('anthropic_key') || '';
+    // ── API KEY ──────────────────────────────────────────────
+    let API_KEY = '';
+    try { API_KEY = localStorage.getItem('anthropic_key') || ''; } catch(e) {}
 
-    // Si ya hay clave guardada, ocultar input y mostrar "Conectado"
-    if (API_KEY_ANTHROPIC) {
+    if (API_KEY) {
       document.getElementById('key-pill').style.display = 'none';
       document.getElementById('key-status').classList.add('visible');
     }
 
     function saveKey() {
       const key = document.getElementById('api-key-anthropic').value.trim();
-      if (!key) {
-        showToast('⚠️ Ingresa una clave válida.');
-        return;
-      }
-      API_KEY_ANTHROPIC = key;
-      localStorage.setItem('anthropic_key', key);
+      if (!key || !key.startsWith('sk-')) { showToast('⚠️ Clave inválida. Debe empezar con sk-'); return; }
+      API_KEY = key;
+      try { localStorage.setItem('anthropic_key', key); } catch(e) {}
       document.getElementById('key-pill').style.display = 'none';
       document.getElementById('key-status').classList.add('visible');
       showToast('✅ Clave guardada');
     }
 
-    // ════════════════════════════════════════════════════════════
-    // 2. VARIABLES DE ESTADO
-    // ════════════════════════════════════════════════════════════
+    // ── ESTADO ───────────────────────────────────────────────
     let mediaRecorder = null;
-    let audioChunks = [];
-    let audioBlob = null;
+    let audioChunks   = [];
+    let audioBlob     = null;
     let timerInterval = null;
-    let seconds = 0;
-    let isRecording = false;
-    let audioCtx = null;
-    let analyser = null;
-    let waveRAF = null;
-    let micStream = null;
+    let seconds       = 0;
+    let isRecording   = false;
+    let audioCtx      = null;
+    let analyser      = null;
+    let waveRAF       = null;
+    let micStream     = null;
 
-    // ════════════════════════════════════════════════════════════
-    // 3. FUNCIONES DE PANTALLA, WAVEFORM, TIMER, GRABACIÓN
-    // ════════════════════════════════════════════════════════════
+    // ── PANTALLAS ────────────────────────────────────────────
     function showScreen(id) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.getElementById(`screen-${id}`).classList.add('active');
+      document.getElementById('screen-' + id).classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // ── WAVEFORM ─────────────────────────────────────────────
     function startWaveform(stream) {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      analyser = audioCtx.createAnalyser();
+      audioCtx  = new (window.AudioContext || window.webkitAudioContext)();
+      analyser  = audioCtx.createAnalyser();
       analyser.fftSize = 256;
-      const src = audioCtx.createMediaStreamSource(stream);
-      src.connect(analyser);
-
+      audioCtx.createMediaStreamSource(stream).connect(analyser);
       const canvas = document.getElementById('waveform');
-      const ctx = canvas.getContext('2d');
+      const ctx    = canvas.getContext('2d');
       document.getElementById('wave-idle').style.display = 'none';
-
       function draw() {
         waveRAF = requestAnimationFrame(draw);
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
+        canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
         const data = new Uint8Array(analyser.frequencyBinCount);
         analyser.getByteFrequencyData(data);
-
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const barW = (canvas.width / data.length) * 2.2;
         let x = 0;
         for (let i = 0; i < data.length; i++) {
           const h = (data[i] / 255) * canvas.height;
-          const alpha = 0.4 + (data[i] / 255) * 0.6;
-          ctx.fillStyle = `rgba(184,146,42,${alpha})`;
+          ctx.fillStyle = 'rgba(184,146,42,' + (0.4 + (data[i]/255)*0.6) + ')';
           ctx.fillRect(x, canvas.height - h, barW - 1, h);
           x += barW;
         }
@@ -525,231 +209,169 @@
       if (waveRAF) { cancelAnimationFrame(waveRAF); waveRAF = null; }
       if (audioCtx) { audioCtx.close(); audioCtx = null; }
       const canvas = document.getElementById('waveform');
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
       document.getElementById('wave-idle').style.display = 'flex';
     }
 
+    // ── TIMER ────────────────────────────────────────────────
     function startTimer() {
-      seconds = 0;
-      updateTimerDisplay();
-      timerInterval = setInterval(() => { seconds++; updateTimerDisplay(); }, 1000);
+      seconds = 0; updateTimer();
+      timerInterval = setInterval(() => { seconds++; updateTimer(); }, 1000);
+    }
+    function stopTimer() { clearInterval(timerInterval); timerInterval = null; }
+    function updateTimer() {
+      const m = String(Math.floor(seconds/60)).padStart(2,'0');
+      const s = String(seconds%60).padStart(2,'0');
+      document.getElementById('timer').textContent = m + ':' + s;
     }
 
-    function stopTimer() {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
-
-    function updateTimerDisplay() {
-      const m = String(Math.floor(seconds / 60)).padStart(2, '0');
-      const s = String(seconds % 60).padStart(2, '0');
-      document.getElementById('timer').textContent = `${m}:${s}`;
-    }
-
+    // ── GRABACIÓN ────────────────────────────────────────────
     async function toggleRecording() {
-      if (isRecording) {
-        stopRecording();
-      } else {
-        await startRecording();
-      }
+      isRecording ? stopRecording() : await startRecording();
     }
 
     async function startRecording() {
-      if (!navigator.mediaDevices) {
-        setStatus('Tu navegador no soporta grabación.', 'err');
-        return;
-      }
-      try {
-        micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      } catch (e) {
-        setStatus('Permiso de micrófono denegado.', 'err');
-        return;
-      }
+      if (!navigator.mediaDevices) { setStatus('Sin acceso al micrófono.','err'); return; }
+      try { micStream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+      catch(e) { setStatus('Permiso de micrófono denegado.','err'); return; }
 
       audioChunks = [];
-      const mimeType = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4']
-        .find(m => MediaRecorder.isTypeSupported(m)) || '';
+      // En iPhone, audio/mp4 funciona mejor
+      const preferredTypes = ['audio/mp4','audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus'];
+      const mimeType = preferredTypes.find(m => MediaRecorder.isTypeSupported(m)) || '';
       mediaRecorder = new MediaRecorder(micStream, mimeType ? { mimeType } : {});
       mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
       mediaRecorder.onstop = onRecordingStop;
-      mediaRecorder.start(200);
+      mediaRecorder.start(500);
 
       isRecording = true;
       startTimer();
       startWaveform(micStream);
 
       const btn = document.getElementById('rec-btn');
-      btn.classList.add('recording');
-      btn.textContent = '⏹';
+      btn.classList.add('recording'); btn.textContent = '⏹';
       document.getElementById('timer-label').textContent = 'Grabando…';
       document.getElementById('timer-label').classList.add('active');
-      setStatus('Grabando… Presiona ⏹ para detener', 'recording');
-      document.getElementById('playback-wrap').classList.remove('visible');
-      document.getElementById('transcript-wrap').classList.remove('visible');
-      document.getElementById('gen-btn').classList.remove('visible');
-      document.getElementById('new-btn').classList.remove('visible');
-      document.getElementById('retry-btn').classList.remove('visible');
+      setStatus('Grabando la reunión… Presiona ⏹ para detener','recording');
+      ['playback-wrap','transcript-wrap','gen-btn','new-btn','retry-btn']
+        .forEach(id => document.getElementById(id).classList.remove('visible'));
     }
 
     function stopRecording() {
-      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-        mediaRecorder.stop();
-      }
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
       micStream?.getTracks().forEach(t => t.stop());
-      stopTimer();
-      stopWaveform();
-      isRecording = false;
-
+      stopTimer(); stopWaveform(); isRecording = false;
       const btn = document.getElementById('rec-btn');
-      btn.classList.remove('recording');
-      btn.classList.add('processing');
-      btn.textContent = '⏳';
+      btn.classList.remove('recording'); btn.classList.add('processing'); btn.textContent = '⏳';
       document.getElementById('timer-label').textContent = 'Procesando…';
       document.getElementById('timer-label').classList.remove('active');
-      setStatus('Procesando el audio…', 'processing');
+      setStatus('Procesando el audio…','processing');
     }
 
-    // ════════════════════════════════════════════════════════════
-    // 4. TRANSCRIPCIÓN CON WEB SPEECH API (SIN CLAVE, SIN CORS)
-    // ════════════════════════════════════════════════════════════
-    function transcribeWithSpeechAPI() {
-      return new Promise((resolve, reject) => {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-          reject(new Error('Tu navegador no soporta reconocimiento de voz. Usa Chrome o Edge.'));
-          return;
-        }
-
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'es-ES';
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-
-        let transcript = '';
-
-        recognition.onresult = (event) => {
-          transcript = event.results[0][0].transcript;
-        };
-
-        recognition.onerror = (event) => {
-          reject(new Error(`Error: ${event.error}`));
-        };
-
-        recognition.onend = () => {
-          if (transcript) {
-            resolve(transcript);
-          } else {
-            reject(new Error('No se detectó voz. Intenta hablar más claro.'));
-          }
-        };
-
-        recognition.start();
-      });
-    }
-
-    // ════════════════════════════════════════════════════════════
-    // 5. onRecordingStop (usa Web Speech API)
-    // ════════════════════════════════════════════════════════════
     async function onRecordingStop() {
-      audioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
-
+      audioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/mp4' });
       const player = document.getElementById('audio-player');
       player.src = URL.createObjectURL(audioBlob);
       document.getElementById('playback-wrap').classList.add('visible');
 
       const btn = document.getElementById('rec-btn');
-      btn.classList.remove('processing');
-      btn.textContent = '🎙';
+      btn.classList.remove('processing'); btn.textContent = '🎙';
       document.getElementById('new-btn').classList.add('visible');
-
       document.getElementById('transcript-wrap').classList.add('visible');
       document.getElementById('gen-btn').classList.add('visible');
 
-      // Intentar transcripción con Web Speech API
-      setStatus('🎤 Escuchando... (habla ahora)', 'processing');
-      document.getElementById('transcript-badge').textContent = '⏳ Escuchando...';
-      try {
-        const transcript = await Promise.race([
-          transcribeWithSpeechAPI(),
-          new Promise((_, reject) => setTimeout(() => reject(new Error('⏰ Tiempo de espera agotado (30s)')), 30000))
-        ]);
-        document.getElementById('transcript').value = transcript;
-        document.getElementById('transcript-badge').textContent = '✓ Lista';
-        setStatus('✅ Transcripción completada.', 'done');
-        document.getElementById('retry-btn').classList.remove('visible');
-      } catch (e) {
-        console.error('Error en transcripción:', e);
-        setStatus(`❌ ${e.message}`, 'err');
-        document.getElementById('transcript-badge').textContent = '⚠️ Falló';
-        document.getElementById('transcript').value = `Error: ${e.message}\n\nPuedes escribir manualmente o presionar "Reintentar".`;
-        document.getElementById('retry-btn').classList.add('visible');
+      if (!API_KEY) {
+        setStatus('Grabación lista. Guarda tu clave Anthropic para transcribir automáticamente.','done');
+        document.getElementById('transcript-badge').textContent = '✏️ Manual';
+        document.getElementById('transcript').placeholder = 'Escribe aquí lo que se habló en la reunión…';
+        return;
       }
+
+      await runTranscription();
     }
 
-    // ════════════════════════════════════════════════════════════
-    // 6. REINTENTAR TRANSCRIPCIÓN
-    // ════════════════════════════════════════════════════════════
-    async function retryTranscription() {
+    // ── TRANSCRIPCIÓN CON CLAUDE ─────────────────────────────
+    async function runTranscription() {
+      setStatus('🤖 Transcribiendo con IA…','processing');
+      document.getElementById('transcript-badge').textContent = '⏳ Procesando…';
       document.getElementById('retry-btn').classList.remove('visible');
-      document.getElementById('transcript-badge').textContent = '⏳ Escuchando...';
-      setStatus('🎤 Escuchando... (habla ahora)', 'processing');
-      try {
-        const transcript = await Promise.race([
-          transcribeWithSpeechAPI(),
-          new Promise((_, reject) => setTimeout(() => reject(new Error('Tiempo agotado')), 30000))
-        ]);
-        document.getElementById('transcript').value = transcript;
-        document.getElementById('transcript-badge').textContent = '✓ Lista';
-        setStatus('✅ Transcripción completada.', 'done');
-      } catch (e) {
-        setStatus(`❌ ${e.message}`, 'err');
-        document.getElementById('transcript-badge').textContent = '⚠️ Falló';
-        document.getElementById('transcript').value = `Error: ${e.message}\n\nEscribe manualmente.`;
-        document.getElementById('retry-btn').classList.add('visible');
-      }
-    }
-
-    // ════════════════════════════════════════════════════════════
-    // 7. GENERAR MINUTA CON ANTHROPIC (usa la clave guardada)
-    // ════════════════════════════════════════════════════════════
-    async function generateMinuta() {
-      const transcript = document.getElementById('transcript').value.trim();
-      if (!transcript) {
-        showToast('Primero transcribe el audio o escribe el texto.');
-        return;
-      }
-
-      // Verificar que haya clave guardada
-      if (!API_KEY_ANTHROPIC) {
-        showToast('⚠️ Primero guarda tu clave de Anthropic en la esquina superior derecha.');
-        return;
-      }
-
-      const btn = document.getElementById('gen-btn');
-      btn.textContent = '⏳ Generando…';
-      btn.disabled = true;
-      setStatus('Generando minuta jurídica…', 'processing');
-
-      const fecha = new Date().toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-      const hora = new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
 
       try {
+        const b64      = await blobToBase64(audioBlob);
+        const mimeType = (audioBlob.type.split(';')[0]) || 'audio/mp4';
+
         const res = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-api-key': API_KEY_ANTHROPIC,
-            'anthropic-version': '2023-06-01'
+            'x-api-key': API_KEY,
+            'anthropic-version': '2023-06-01',
+            'anthropic-beta': 'audios-2025-05-14'
           },
           body: JSON.stringify({
             model: 'claude-sonnet-4-6',
-            max_tokens: 2000,
-            system: `Eres un abogado chileno experto en redactar minutas de audiencia de juicio.
-A partir de la transcripción, extrae la información relevante y redacta una minuta formal.
+            max_tokens: 4000,
+            system: 'Eres un asistente legal chileno. Transcribe el audio con exactitud. Identifica los hablantes si es posible (Abogado / Cliente). Corrige errores de pronunciación. Entrega solo la transcripción limpia en español, sin comentarios.',
+            messages: [{
+              role: 'user',
+              content: [
+                { type: 'audio', source: { type: 'base64', media_type: mimeType, data: b64 } },
+                { type: 'text', text: 'Transcribe esta grabación de reunión jurídica.' }
+              ]
+            }]
+          })
+        });
 
-La minuta DEBE tener exactamente este formato:
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err?.error?.message || 'Error ' + res.status);
+        }
+
+        const data = await res.json();
+        const text = data.content?.map(c => c.text || '').join('').trim();
+
+        if (text) {
+          document.getElementById('transcript').value = text;
+          document.getElementById('transcript-badge').textContent = '✓ Lista';
+          setStatus('✅ Transcripción completada. Revisá y generá la minuta.','done');
+        } else {
+          throw new Error('No se detectó audio. Intenta hablar más claro.');
+        }
+      } catch(e) {
+        console.error(e);
+        document.getElementById('transcript-badge').textContent = '⚠️ Falló';
+        document.getElementById('transcript').placeholder = 'Error al transcribir. Podés escribir manualmente o reintentar.';
+        document.getElementById('retry-btn').classList.add('visible');
+        setStatus('❌ ' + e.message,'err');
+      }
+    }
+
+    async function retryTranscription() {
+      if (!audioBlob) { showToast('No hay audio grabado.'); return; }
+      await runTranscription();
+    }
+
+    // ── GENERAR MINUTA ───────────────────────────────────────
+    async function generateMinuta() {
+      const transcript = document.getElementById('transcript').value.trim();
+      if (!transcript) { showToast('Primero transcribe el audio o escribe el texto.'); return; }
+      if (!API_KEY)     { showToast('⚠️ Guarda tu clave de Anthropic primero.'); return; }
+
+      const btn = document.getElementById('gen-btn');
+      btn.textContent = '⏳ Generando…'; btn.disabled = true;
+      setStatus('Generando minuta jurídica…','processing');
+
+      const fecha = new Date().toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'});
+      const hora  = new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+
+      try {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json', 'x-api-key': API_KEY, 'anthropic-version':'2023-06-01' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-6',
+            max_tokens: 2000,
+            system: `Eres un abogado chileno experto en minutas de audiencia de juicio. A partir de la transcripción, extrae la información y redacta una minuta formal con este formato exacto:
 
 ================================================================
       MINUTA DE AUDIENCIA DE JUICIO — PARTE DEMANDANTE
@@ -776,18 +398,15 @@ Demandado     : [nombre]
 I. HECHOS PACÍFICOS
 ────────────────────────────────────────────────────────────────
   1. [hecho]
-  2. [hecho]
 
 II. HECHOS CONTROVERTIDOS
 ────────────────────────────────────────────────────────────────
   1. [hecho]
-  2. [hecho]
 
 III. SOLICITUD DE ALIMENTOS
 ────────────────────────────────────────────────────────────────
 Monto solicitado: [monto]
 Necesidades del alimentario:
-  − [necesidad]
   − [necesidad]
 
 IV. PRUEBA OFRECIDA
@@ -802,7 +421,6 @@ C. TESTIMONIAL
 V. PUNTOS DE PRUEBA PENDIENTES
 ────────────────────────────────────────────────────────────────
   1. [punto]
-  2. [punto]
 
 ACUERDOS Y TAREAS PENDIENTES
 ────────────────────────────────────────────────────────────────
@@ -812,31 +430,26 @@ Tareas pendientes: [tareas]
 ================================================================
 
 Responde SOLO con la minuta, sin explicaciones adicionales.`,
-            messages: [{ role: 'user', content: `Aquí está la transcripción:\n\n${transcript}` }]
+            messages: [{ role: 'user', content: 'Transcripción:\n\n' + transcript }]
           })
         });
 
         if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          throw new Error(err?.error?.message || `Error ${res.status}`);
+          const err = await res.json().catch(()=>({}));
+          throw new Error(err?.error?.message || 'Error ' + res.status);
         }
         const data = await res.json();
-        const minutaText = data.content?.map(c => c.text || '').join('').trim();
-
-        document.getElementById('minuta-doc').textContent = minutaText;
-        btn.textContent = 'Generar Minuta →';
-        btn.disabled = false;
-        setStatus('Minuta generada ✓', 'done');
+        document.getElementById('minuta-doc').textContent = data.content?.map(c=>c.text||'').join('').trim();
+        setStatus('Minuta generada ✓','done');
         showScreen('minuta');
-      } catch (e) {
-        const minutaText = buildBasicMinuta(transcript, fecha, hora);
-        document.getElementById('minuta-doc').textContent = minutaText;
-        btn.textContent = 'Generar Minuta →';
-        btn.disabled = false;
-        setStatus('Minuta generada (modo básico)', 'done');
+      } catch(e) {
+        document.getElementById('minuta-doc').textContent = buildBasicMinuta(transcript, fecha, hora);
+        setStatus('Minuta básica generada','done');
         showScreen('minuta');
-        showToast('⚠️ Error con IA, minuta básica generada.');
+        showToast('⚠️ Error con IA: ' + e.message);
       }
+
+      btn.textContent = 'Generar Minuta →'; btn.disabled = false;
     }
 
     function buildBasicMinuta(transcript, fecha, hora) {
@@ -851,37 +464,38 @@ ${transcript}
 ================================================================`;
     }
 
-    // ════════════════════════════════════════════════════════════
-    // 8. UTILIDADES
-    // ════════════════════════════════════════════════════════════
+    // ── UTILIDADES ───────────────────────────────────────────
+    function blobToBase64(blob) {
+      return new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onload  = () => res(r.result.split(',')[1]);
+        r.onerror = rej;
+        r.readAsDataURL(blob);
+      });
+    }
+
     function resetRecorder() {
-      audioBlob = null;
-      audioChunks = [];
+      audioBlob = null; audioChunks = [];
       document.getElementById('audio-player').src = '';
       document.getElementById('transcript').value = '';
       document.getElementById('timer').textContent = '00:00';
       document.getElementById('timer-label').textContent = 'Listo para grabar';
       document.getElementById('timer-label').classList.remove('active');
-      document.getElementById('playback-wrap').classList.remove('visible');
-      document.getElementById('transcript-wrap').classList.remove('visible');
-      document.getElementById('gen-btn').classList.remove('visible');
-      document.getElementById('new-btn').classList.remove('visible');
-      document.getElementById('retry-btn').classList.remove('visible');
-      document.getElementById('transcript-badge').textContent = '';
       document.getElementById('wave-idle').style.display = 'flex';
-      setStatus('Presiona el botón para comenzar', '');
+      document.getElementById('transcript-badge').textContent = '';
+      ['playback-wrap','transcript-wrap','gen-btn','new-btn','retry-btn']
+        .forEach(id => document.getElementById(id).classList.remove('visible'));
+      setStatus('Presiona el botón para comenzar','');
     }
 
     function setStatus(msg, type) {
       const el = document.getElementById('status');
-      el.textContent = msg;
-      el.className = `status-line ${type || ''}`;
+      el.textContent = msg; el.className = 'status-line ' + (type||'');
     }
 
     function showToast(msg) {
       const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.classList.add('show');
+      t.textContent = msg; t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 3000);
     }
 
@@ -891,25 +505,13 @@ ${transcript}
     }
 
     function downloadMinuta() {
-      const txt = document.getElementById('minuta-doc').textContent;
-      const date = new Date().toLocaleDateString('es-CL').replace(/\//g, '-');
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain;charset=utf-8' }));
-      a.download = `minuta_${date}.txt`;
+      const txt  = document.getElementById('minuta-doc').textContent;
+      const date = new Date().toLocaleDateString('es-CL').replace(/\//g,'-');
+      const a    = document.createElement('a');
+      a.href     = URL.createObjectURL(new Blob([txt],{type:'text/plain;charset=utf-8'}));
+      a.download = 'minuta_' + date + '.txt';
       a.click();
     }
-
-    // ════════════════════════════════════════════════════════════
-    // 9. VERIFICAR COMPATIBILIDAD AL CARGAR
-    // ════════════════════════════════════════════════════════════
-    (function checkCompatibility() {
-      const hasSpeech = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
-      if (!hasSpeech) {
-        setStatus('⚠️ Tu navegador no soporta reconocimiento de voz. Usa Chrome.', 'err');
-      } else {
-        console.log('✅ Web Speech API compatible');
-      }
-    })();
   </script>
 </body>
 </html>
