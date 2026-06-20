@@ -381,7 +381,7 @@ textarea#transcript {
 
 <script>
 // ════════════════════════════════════════════════════════════
-// 1. CLAVES API FIJAS (COMPLETAS)
+// 1. CLAVES API (YA CON CRÉDITO)
 // ════════════════════════════════════════════════════════════
 const API_KEY_OPENAI = "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";
 const API_KEY_ANTHROPIC = "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";
@@ -401,7 +401,7 @@ let waveRAF = null;
 let micStream = null;
 
 // ════════════════════════════════════════════════════════════
-// 3. FUNCIONES DE PANTALLA
+// 3. FUNCIONES DE PANTALLA, WAVEFORM, TIMER, GRABACIÓN
 // ════════════════════════════════════════════════════════════
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -409,9 +409,6 @@ function showScreen(id) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ════════════════════════════════════════════════════════════
-// 4. WAVEFORM
-// ════════════════════════════════════════════════════════════
 function startWaveform(stream) {
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   analyser = audioCtx.createAnalyser();
@@ -453,9 +450,6 @@ function stopWaveform() {
   document.getElementById('wave-idle').style.display = 'flex';
 }
 
-// ════════════════════════════════════════════════════════════
-// 5. TIMER
-// ════════════════════════════════════════════════════════════
 function startTimer() {
   seconds = 0;
   updateTimerDisplay();
@@ -471,9 +465,6 @@ function updateTimerDisplay() {
   document.getElementById('timer').textContent = `${m}:${s}`;
 }
 
-// ════════════════════════════════════════════════════════════
-// 6. GRABACIÓN
-// ════════════════════════════════════════════════════════════
 async function toggleRecording() {
   if (isRecording) {
     stopRecording();
@@ -495,8 +486,7 @@ async function startRecording() {
   }
 
   audioChunks = [];
-  // Usamos MP4 para mejor compatibilidad con Whisper
-  const mimeType = ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus']
+  const mimeType = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4']
     .find(m => MediaRecorder.isTypeSupported(m)) || '';
   mediaRecorder = new MediaRecorder(micStream, mimeType ? { mimeType } : {});
   mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
@@ -539,32 +529,98 @@ function stopRecording() {
 }
 
 // ════════════════════════════════════════════════════════════
-// 7. VALIDACIÓN DE CLAVE ANTES DE TRANSCRIBIR
+// 4. CONVERSIÓN A WAV Y TRANSCRIPCIÓN (DEFINITIVA)
 // ════════════════════════════════════════════════════════════
-async function validateOpenAIKey() {
-  try {
-    const res = await fetch('https://api.openai.com/v1/models', {
-      headers: { 'Authorization': `Bearer ${API_KEY_OPENAI}` }
-    });
-    if (res.ok) {
-      console.log('✅ Clave de OpenAI válida');
-      return true;
-    } else {
-      const error = await res.json().catch(() => ({}));
-      console.error('❌ Clave inválida:', error);
-      return false;
+function audioBufferToWav(buffer) {
+  const numChannels = buffer.numberOfChannels;
+  const sampleRate = buffer.sampleRate;
+  const format = 1;
+  const bitDepth = 16;
+  const samples = buffer.getChannelData(0);
+  const dataLength = samples.length * (bitDepth / 8);
+  const bufferLength = 44 + dataLength;
+  const arrayBuffer = new ArrayBuffer(bufferLength);
+  const view = new DataView(arrayBuffer);
+
+  const writeString = (offset, string) => {
+    for (let i = 0; i < string.length; i++) {
+      view.setUint8(offset + i, string.charCodeAt(i));
     }
-  } catch (e) {
-    console.error('❌ Error validando clave:', e);
-    return false;
+  };
+  writeString(0, 'RIFF');
+  view.setUint32(4, bufferLength - 8, true);
+  writeString(8, 'WAVE');
+  writeString(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, format, true);
+  view.setUint16(22, numChannels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * numChannels * (bitDepth / 8), true);
+  view.setUint16(32, numChannels * (bitDepth / 8), true);
+  view.setUint16(34, bitDepth, true);
+  writeString(36, 'data');
+  view.setUint32(40, dataLength, true);
+
+  const volume = 1;
+  for (let i = 0; i < samples.length; i++) {
+    const s = Math.max(-1, Math.min(1, samples[i]));
+    const val = s < 0 ? s * 0x8000 : s * 0x7FFF;
+    view.setInt16(44 + i * 2, val * volume, true);
   }
+  return new Blob([arrayBuffer], { type: 'audio/wav' });
+}
+
+async function transcribeAudio(blob) {
+  // Validar que la clave no esté vacía
+  if (!API_KEY_OPENAI || API_KEY_OPENAI.length < 20) {
+    throw new Error('❌ Clave de OpenAI inválida o incompleta.');
+  }
+
+  // Convertir a WAV
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const arrayBuffer = await blob.arrayBuffer();
+  const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+  const wavBlob = audioBufferToWav(audioBuffer);
+
+  const formData = new FormData();
+  formData.append('file', wavBlob, 'audio.wav');
+  formData.append('model', 'whisper-1');
+  formData.append('language', 'es');
+  formData.append('response_format', 'json');
+
+  console.log('📤 Enviando WAV a OpenAI. Tamaño:', wavBlob.size);
+
+  const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${API_KEY_OPENAI}` },
+    body: formData
+  });
+
+  console.log('📥 Respuesta de OpenAI:', res.status, res.statusText);
+
+  if (!res.ok) {
+    let errorMsg = `Error HTTP ${res.status}`;
+    try {
+      const errorData = await res.json();
+      console.error('❌ Error detallado:', errorData);
+      errorMsg = errorData?.error?.message || errorMsg;
+    } catch (e) {
+      const text = await res.text();
+      console.error('❌ Respuesta no JSON:', text);
+      errorMsg = text || errorMsg;
+    }
+    throw new Error(errorMsg);
+  }
+
+  const data = await res.json();
+  console.log('✅ Transcripción recibida:', data);
+  return data.text || '';
 }
 
 // ════════════════════════════════════════════════════════════
-// 8. onRecordingStop (CON VALIDACIÓN Y CONVERSIÓN)
+// 5. onRecordingStop (CON VALIDACIÓN DE CRÉDITO)
 // ════════════════════════════════════════════════════════════
 async function onRecordingStop() {
-  // Crear blob con el formato que tenga
   audioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
 
   const player = document.getElementById('audio-player');
@@ -579,60 +635,22 @@ async function onRecordingStop() {
   document.getElementById('transcript-wrap').classList.add('visible');
   document.getElementById('gen-btn').classList.add('visible');
 
-  // Validar clave primero
-  setStatus('🔍 Validando clave de OpenAI…', 'processing');
-  const keyValid = await validateOpenAIKey();
-  if (!keyValid) {
-    setStatus('❌ Clave de OpenAI inválida o sin crédito. Revisa tu cuenta.', 'err');
+  // Verificar que la clave no sea la de ejemplo
+  if (!API_KEY_OPENAI || API_KEY_OPENAI.length < 20) {
+    setStatus('❌ Clave de OpenAI inválida. Reemplázala en el código.', 'err');
     document.getElementById('transcript-badge').textContent = '⚠️ Clave inválida';
     return;
   }
 
-  // Convertir audio a formato más compatible (MP3)
-  setStatus('🔄 Preparando audio para transcripción…', 'processing');
+  // Intentar transcripción
+  setStatus('🔊 Transcribiendo con OpenAI Whisper (WAV)…', 'processing');
+  document.getElementById('transcript-badge').textContent = '⏳ Transcribiendo…';
   try {
-    // Convertir el blob a un formato que Whisper acepte mejor (usamos MP3)
-    const audioBuffer = await blobToArrayBuffer(audioBlob);
-    // Para evitar complicaciones con librerías externas, forzamos el envío con el tipo original
-    // pero renombramos el archivo con extensión .mp3 para que Whisper lo acepte
-    const formData = new FormData();
-    // Creamos un nuevo Blob con el mismo contenido pero forzando tipo MP3
-    const mp3Blob = new Blob([audioBuffer], { type: 'audio/mpeg' });
-    formData.append('file', mp3Blob, 'audio.mp3');
-    formData.append('model', 'whisper-1');
-    formData.append('language', 'es');
-    formData.append('response_format', 'json');
-
-    console.log('📤 Enviando audio a OpenAI. Tamaño:', mp3Blob.size, 'Tipo:', mp3Blob.type);
-
-    setStatus('🔊 Transcribiendo con OpenAI Whisper…', 'processing');
-    document.getElementById('transcript-badge').textContent = '⏳ Transcribiendo…';
-
-    const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${API_KEY_OPENAI}` },
-      body: formData
-    });
-
-    console.log('📥 Respuesta de OpenAI:', res.status, res.statusText);
-
-    if (!res.ok) {
-      let errorMsg = `Error HTTP ${res.status}`;
-      try {
-        const errorData = await res.json();
-        console.error('❌ Error detallado de OpenAI:', errorData);
-        errorMsg = errorData?.error?.message || errorMsg;
-      } catch (e) {
-        const text = await res.text();
-        console.error('❌ Respuesta no JSON:', text);
-        errorMsg = text || errorMsg;
-      }
-      throw new Error(errorMsg);
-    }
-
-    const data = await res.json();
-    console.log('✅ Transcripción recibida:', data);
-    document.getElementById('transcript').value = data.text || '';
+    const transcript = await Promise.race([
+      transcribeAudio(audioBlob),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('⏰ Tiempo de espera agotado (30s)')), 30000))
+    ]);
+    document.getElementById('transcript').value = transcript;
     document.getElementById('transcript-badge').textContent = '✓ Lista';
     setStatus('✅ Transcripción completada. Revisa y genera la minuta.', 'done');
     document.getElementById('retry-btn').classList.remove('visible');
@@ -645,7 +663,7 @@ async function onRecordingStop() {
 }
 
 // ════════════════════════════════════════════════════════════
-// 9. REINTENTAR TRANSCRIPCIÓN
+// 6. REINTENTAR TRANSCRIPCIÓN
 // ════════════════════════════════════════════════════════════
 async function retryTranscription() {
   if (!audioBlob) {
@@ -654,45 +672,16 @@ async function retryTranscription() {
   }
   document.getElementById('retry-btn').classList.remove('visible');
   document.getElementById('transcript-badge').textContent = '⏳ Reintentando…';
-  setStatus('Reintentando transcripción…', 'processing');
+  setStatus('Reintentando transcripción (WAV)…', 'processing');
 
-  // Forzar la reconversión llamando a onRecordingStop nuevamente
-  // pero sin duplicar la interfaz (usamos la misma lógica)
   try {
-    const keyValid = await validateOpenAIKey();
-    if (!keyValid) {
-      throw new Error('Clave de OpenAI inválida');
-    }
-    const audioBuffer = await blobToArrayBuffer(audioBlob);
-    const mp3Blob = new Blob([audioBuffer], { type: 'audio/mpeg' });
-    const formData = new FormData();
-    formData.append('file', mp3Blob, 'audio.mp3');
-    formData.append('model', 'whisper-1');
-    formData.append('language', 'es');
-    formData.append('response_format', 'json');
-
-    const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${API_KEY_OPENAI}` },
-      body: formData
-    });
-
-    if (!res.ok) {
-      let errorMsg = `Error HTTP ${res.status}`;
-      try {
-        const errorData = await res.json();
-        errorMsg = errorData?.error?.message || errorMsg;
-      } catch (e) {
-        const text = await res.text();
-        errorMsg = text || errorMsg;
-      }
-      throw new Error(errorMsg);
-    }
-    const data = await res.json();
-    document.getElementById('transcript').value = data.text || '';
+    const transcript = await Promise.race([
+      transcribeAudio(audioBlob),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Tiempo agotado')), 30000))
+    ]);
+    document.getElementById('transcript').value = transcript;
     document.getElementById('transcript-badge').textContent = '✓ Lista';
     setStatus('✅ Transcripción completada.', 'done');
-    document.getElementById('retry-btn').classList.remove('visible');
   } catch (e) {
     setStatus(`❌ Error: ${e.message}`, 'err');
     document.getElementById('transcript-badge').textContent = '⚠️ Falló';
@@ -701,7 +690,7 @@ async function retryTranscription() {
 }
 
 // ════════════════════════════════════════════════════════════
-// 10. GENERAR MINUTA CON ANTHROPIC
+// 7. GENERAR MINUTA CON ANTHROPIC
 // ════════════════════════════════════════════════════════════
 async function generateMinuta() {
   const transcript = document.getElementById('transcript').value.trim();
@@ -835,17 +824,8 @@ ${transcript}
 }
 
 // ════════════════════════════════════════════════════════════
-// 11. UTILIDADES
+// 8. UTILIDADES
 // ════════════════════════════════════════════════════════════
-function blobToArrayBuffer(blob) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsArrayBuffer(blob);
-  });
-}
-
 function resetRecorder() {
   audioBlob = null;
   audioChunks = [];
@@ -893,5 +873,4 @@ function downloadMinuta() {
 </script>
 </body>
 </html>
-
 
