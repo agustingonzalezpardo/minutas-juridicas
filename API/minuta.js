@@ -1,28 +1,18 @@
-// api/minuta.js - Backend para generar minuta con Anthropic
+// api/minuta.js
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Método no permitido' });
-  }
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
 
   try {
     const { transcript, fecha, hora } = req.body;
-
-    if (!transcript) {
-      return res.status(400).json({ error: 'No hay transcripción' });
-    }
+    if (!transcript) throw new Error('No hay transcripción');
 
     const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-    if (!ANTHROPIC_API_KEY) {
-      return res.status(500).json({ error: 'Clave de Anthropic no configurada' });
-    }
+    if (!ANTHROPIC_API_KEY) throw new Error('Clave de Anthropic no configurada');
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -111,20 +101,10 @@ Responde SOLO con la minuta, sin explicaciones adicionales.`,
 
     const data = await response.json();
     const minutaText = data.content?.map(c => c.text).join('') || '';
-
     return res.status(200).json({ minuta: minutaText });
 
   } catch (error) {
-    console.error('Error en minuta:', error);
+    console.error('Error:', error);
     return res.status(500).json({ error: error.message || 'Error al generar minuta' });
-  }
-});
-
-    const data = await response.json();
-    if (!response.ok) return res.status(response.status).json(data);
-    const minuta = data.content?.map(c => c.text || '').join('').trim();
-    res.status(200).json({ minuta });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
   }
 }
