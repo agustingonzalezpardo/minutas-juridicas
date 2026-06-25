@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Minutas Jurídicas · Grabadora</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
@@ -350,7 +350,6 @@
     <div class="status-badge online" id="status-badge">● Conectado</div>
   </header>
   <main>
-    <!-- Pantalla de grabación -->
     <div class="screen active" id="screen-rec">
       <div class="wave-wrap">
         <canvas id="waveform"></canvas>
@@ -380,7 +379,6 @@
       <button class="new-btn" id="new-btn" onclick="resetRecorder()">+ Nueva grabación</button>
     </div>
 
-    <!-- Pantalla de minuta -->
     <div class="screen" id="screen-minuta">
       <div class="minuta-screen">
         <div class="minuta-toolbar">
@@ -422,7 +420,7 @@
     }
 
     function startWaveform(stream) {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      audioCtx = new(window.AudioContext || window.webkitAudioContext)();
       analyser = audioCtx.createAnalyser();
       analyser.fftSize = 256;
       const src = audioCtx.createMediaStreamSource(stream);
@@ -543,46 +541,32 @@
     }
 
     // ════════════════════════════════════════════════════════════
-    // 3. TRANSCRIPCIÓN CON WEB SPEECH API (SIN CLAVE, SIN CORS)
+    // 3. TRANSCRIPCIÓN CON OPENAI WHISPER (backend de Vercel)
     // ════════════════════════════════════════════════════════════
-    function transcribeWithSpeechAPI() {
-      return new Promise((resolve, reject) => {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-          reject(new Error('Tu navegador no soporta reconocimiento de voz. Usa Chrome o Edge.'));
-          return;
-        }
+    async function transcribeWithWhisper(blob) {
+      const formData = new FormData();
+      // Detectar formato correcto según dispositivo
+      const extension = blob.type.includes('mp4') ? 'm4a' : 'webm';
+      formData.append('file', blob, `audio.${extension}`);
+      formData.append('model', 'whisper-1');
+      formData.append('language', 'es');
 
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'es-ES';
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-
-        let transcript = '';
-
-        recognition.onresult = (event) => {
-          transcript = event.results[0][0].transcript;
-        };
-
-        recognition.onerror = (event) => {
-          reject(new Error(`Error: ${event.error}`));
-        };
-
-        recognition.onend = () => {
-          if (transcript) {
-            resolve(transcript);
-          } else {
-            reject(new Error('No se detectó voz. Intenta hablar más claro.'));
-          }
-        };
-
-        recognition.start();
+      const res = await fetch('/api/transcribe', {
+        method: 'POST',
+        body: formData
       });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error?.error || `Error ${res.status}`);
+      }
+
+      const data = await res.json();
+      return data.text || '';
     }
 
     // ════════════════════════════════════════════════════════════
-    // 4. onRecordingStop (usa Web Speech API)
+    // 4. onRecordingStop
     // ════════════════════════════════════════════════════════════
     async function onRecordingStop() {
       audioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
@@ -599,20 +583,19 @@
       document.getElementById('transcript-wrap').classList.add('visible');
       document.getElementById('gen-btn').classList.add('visible');
 
-      // Intentar transcripción con Web Speech API
-      setStatus('🎤 Escuchando... (habla ahora)', 'processing');
-      document.getElementById('transcript-badge').textContent = '⏳ Escuchando...';
+      setStatus('🔊 Transcribiendo con IA (Whisper)…', 'processing');
+      document.getElementById('transcript-badge').textContent = '⏳ Transcribiendo…';
       try {
         const transcript = await Promise.race([
-          transcribeWithSpeechAPI(),
-          new Promise((_, reject) => setTimeout(() => reject(new Error('⏰ Tiempo de espera agotado (30s)')), 30000))
+          transcribeWithWhisper(audioBlob),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('⏰ Tiempo de espera agotado (60s)')), 60000))
         ]);
         document.getElementById('transcript').value = transcript;
         document.getElementById('transcript-badge').textContent = '✓ Lista';
         setStatus('✅ Transcripción completada.', 'done');
         document.getElementById('retry-btn').classList.remove('visible');
       } catch (e) {
-        console.error('Error en transcripción:', e);
+        console.error('Error:', e);
         setStatus(`❌ ${e.message}`, 'err');
         document.getElementById('transcript-badge').textContent = '⚠️ Falló';
         document.getElementById('transcript').value = `Error: ${e.message}\n\nPuedes escribir manualmente o presionar "Reintentar".`;
@@ -621,16 +604,20 @@
     }
 
     // ════════════════════════════════════════════════════════════
-    // 5. REINTENTAR TRANSCRIPCIÓN
+    // 5. REINTENTAR
     // ════════════════════════════════════════════════════════════
     async function retryTranscription() {
+      if (!audioBlob) {
+        showToast('No hay audio grabado.');
+        return;
+      }
       document.getElementById('retry-btn').classList.remove('visible');
-      document.getElementById('transcript-badge').textContent = '⏳ Escuchando...';
-      setStatus('🎤 Escuchando... (habla ahora)', 'processing');
+      document.getElementById('transcript-badge').textContent = '⏳ Reintentando…';
+      setStatus('🔊 Reintentando transcripción con IA…', 'processing');
       try {
         const transcript = await Promise.race([
-          transcribeWithSpeechAPI(),
-          new Promise((_, reject) => setTimeout(() => reject(new Error('Tiempo agotado')), 30000))
+          transcribeWithWhisper(audioBlob),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Tiempo agotado')), 60000))
         ]);
         document.getElementById('transcript').value = transcript;
         document.getElementById('transcript-badge').textContent = '✓ Lista';
@@ -644,7 +631,7 @@
     }
 
     // ════════════════════════════════════════════════════════════
-    // 6. GENERAR MINUTA CON ANTHROPIC (llama al backend de Vercel)
+    // 6. GENERAR MINUTA (backend de Vercel)
     // ════════════════════════════════════════════════════════════
     async function generateMinuta() {
       const transcript = document.getElementById('transcript').value.trim();
@@ -662,7 +649,6 @@
       const hora = new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
 
       try {
-        // Llamada al backend de Vercel (api/minuta.js)
         const res = await fetch('/api/minuta', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -688,7 +674,6 @@
         showScreen('minuta');
       } catch (e) {
         console.error('Error al generar minuta:', e);
-        // Fallback: minuta básica
         const minutaText = buildBasicMinuta(transcript, fecha, hora);
         document.getElementById('minuta-doc').textContent = minutaText;
         btn.textContent = 'Generar Minuta →';
@@ -758,18 +743,6 @@ ${transcript}
       a.download = `minuta_${date}.txt`;
       a.click();
     }
-
-    // ════════════════════════════════════════════════════════════
-    // 8. VERIFICAR COMPATIBILIDAD AL CARGAR
-    // ════════════════════════════════════════════════════════════
-    (function checkCompatibility() {
-      const hasSpeech = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
-      if (!hasSpeech) {
-        setStatus('⚠️ Tu navegador no soporta reconocimiento de voz. Usa Chrome.', 'err');
-      } else {
-        console.log('✅ Web Speech API compatible');
-      }
-    })();
   </script>
 </body>
 </html>
