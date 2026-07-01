@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     const { transcript, fecha, hora } = req.body;
 
     if (!transcript || transcript.trim() === '') {
-      return res.status(400).json({ error: 'No hay transcripción para generar la minuta' });
+      return res.status(400).json({ error: 'No hay transcripción' });
     }
 
     const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
@@ -25,7 +25,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Clave de Anthropic no configurada en el servidor' });
     }
 
-    console.log('📤 Generando minuta con Anthropic...');
+    console.log('📤 Generando minuta...');
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -108,7 +108,7 @@ Responde SOLO con la minuta, sin explicaciones adicionales.`,
     });
 
     const responseText = await response.text();
-    console.log(`📥 Respuesta de Anthropic: status ${response.status}`);
+    console.log('📥 Respuesta Anthropic:', response.status);
 
     if (!response.ok) {
       let errorMessage = `Error HTTP ${response.status}`;
@@ -125,7 +125,7 @@ Responde SOLO con la minuta, sin explicaciones adicionales.`,
     try {
       data = JSON.parse(responseText);
     } catch (e) {
-      throw new Error('La respuesta de Anthropic no es JSON válido');
+      throw new Error('La respuesta no es JSON válido');
     }
 
     const minutaText = data.content?.map(c => c.text).join('') || '';
@@ -137,7 +137,7 @@ Responde SOLO con la minuta, sin explicaciones adicionales.`,
     return res.status(200).json({ minuta: minutaText });
 
   } catch (error) {
-    console.error('❌ Error en minuta:', error);
-    return res.status(500).json({ error: error.message || 'Error al generar la minuta' });
+    console.error('❌ Error:', error);
+    return res.status(500).json({ error: error.message || 'Error al generar minuta' });
   }
 }
