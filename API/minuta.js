@@ -4,28 +4,15 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Método no permitido' });
-  }
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
 
   try {
     const { transcript, fecha, hora } = req.body;
-
-    if (!transcript || transcript.trim() === '') {
-      return res.status(400).json({ error: 'No hay transcripción' });
-    }
+    if (!transcript) throw new Error('No hay transcripción');
 
     const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-    if (!ANTHROPIC_API_KEY) {
-      console.error('❌ ANTHROPIC_API_KEY no configurada');
-      return res.status(500).json({ error: 'Clave de Anthropic no configurada en el servidor' });
-    }
-
-    console.log('📤 Generando minuta...');
+    if (!ANTHROPIC_API_KEY) throw new Error('Clave de Anthropic no configurada');
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -107,37 +94,17 @@ Responde SOLO con la minuta, sin explicaciones adicionales.`,
       })
     });
 
-    const responseText = await response.text();
-    console.log('📥 Respuesta Anthropic:', response.status);
-
     if (!response.ok) {
-      let errorMessage = `Error HTTP ${response.status}`;
-      try {
-        const errorJson = JSON.parse(responseText);
-        errorMessage = errorJson?.error?.message || errorMessage;
-      } catch (e) {
-        errorMessage = responseText || errorMessage;
-      }
-      throw new Error(errorMessage);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData?.error?.message || `Error HTTP ${response.status}`);
     }
 
-    let data;
-    try {
-      data = JSON.parse(responseText);
-    } catch (e) {
-      throw new Error('La respuesta no es JSON válido');
-    }
-
+    const data = await response.json();
     const minutaText = data.content?.map(c => c.text).join('') || '';
-    if (!minutaText) {
-      throw new Error('La minuta generada está vacía');
-    }
-
-    console.log('✅ Minuta generada');
     return res.status(200).json({ minuta: minutaText });
 
   } catch (error) {
-    console.error('❌ Error:', error);
+    console.error('Error:', error);
     return res.status(500).json({ error: error.message || 'Error al generar minuta' });
   }
 }
