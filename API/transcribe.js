@@ -13,20 +13,12 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Método no permitido' });
-  }
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
 
   try {
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-    if (!OPENAI_API_KEY) {
-      console.error('❌ OPENAI_API_KEY no configurada');
-      return res.status(500).json({ error: 'Clave de OpenAI no configurada en el servidor' });
-    }
+    if (!OPENAI_API_KEY) throw new Error('Clave de OpenAI no configurada');
 
     const busboy = Busboy({ headers: req.headers });
     let fileBuffer = null;
@@ -48,12 +40,7 @@ export default async function handler(req, res) {
       req.pipe(busboy);
     });
 
-    if (!fileBuffer) {
-      console.error('❌ No se recibió archivo');
-      return res.status(400).json({ error: 'No se recibió ningún archivo de audio' });
-    }
-
-    console.log('📤 Archivo recibido:', fileName, fileBuffer.length, 'bytes');
+    if (!fileBuffer) throw new Error('No se recibió archivo');
 
     const formData = new FormData();
     const blob = new Blob([fileBuffer], { type: fileMimeType });
@@ -62,45 +49,22 @@ export default async function handler(req, res) {
     formData.append('language', 'es');
     formData.append('response_format', 'json');
 
-    console.log('📤 Enviando a OpenAI...');
     const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-      },
+      headers: { 'Authorization': `Bearer ${OPENAI_API_KEY}` },
       body: formData,
     });
 
-    const responseText = await response.text();
-    console.log('📥 Respuesta OpenAI:', response.status);
-
     if (!response.ok) {
-      let errorMessage = `Error HTTP ${response.status}`;
-      try {
-        const errorJson = JSON.parse(responseText);
-        errorMessage = errorJson?.error?.message || errorMessage;
-      } catch (e) {
-        errorMessage = responseText || errorMessage;
-      }
-      throw new Error(errorMessage);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData?.error?.message || `Error HTTP ${response.status}`);
     }
 
-    let data;
-    try {
-      data = JSON.parse(responseText);
-    } catch (e) {
-      throw new Error('La respuesta no es JSON válido');
-    }
-
-    if (!data.text) {
-      throw new Error('La respuesta no contiene "text"');
-    }
-
-    console.log('✅ Transcripción:', data.text);
-    return res.status(200).json({ text: data.text });
+    const data = await response.json();
+    return res.status(200).json({ text: data.text || '' });
 
   } catch (error) {
-    console.error('❌ Error:', error);
+    console.error('Error:', error);
     return res.status(500).json({ error: error.message || 'Error al transcribir' });
   }
 }
