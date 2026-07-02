@@ -8,42 +8,51 @@
     @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
 
     :root {
-      --primary: #003366;
-      --primary-light: #1a4f8a;
-      --secondary: #f8f9fa;
-      --accent: #c9a84c;
-      --text-dark: #1a1a2e;
-      --text-muted: #555;
-      --white: #ffffff;
-      --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      --radius: 12px;
-      --border: #e5e7eb;
+      --primary: #0a2540;
+      --primary-light: #1a3a5c;
+      --accent: #b4943c;
+      --accent-light: #d4b05a;
+      --bg: #f5f6f8;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e9edf2;
+      --shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+      --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.10);
+      --radius: 16px;
+      --radius-sm: 8px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
+    html,
     body {
+      height: 100%;
       font-family: 'Inter', sans-serif;
-      background: #f3f4f6;
-      color: var(--text-dark);
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
       line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
     }
 
     /* ─── HEADER ─── */
     header {
-      background: var(--white);
+      background: var(--card-bg);
       border-bottom: 1px solid var(--border);
-      padding: 0.8rem 2rem;
+      padding: 0.9rem 2.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 1rem;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
 
     .logo {
@@ -51,10 +60,11 @@
       align-items: center;
       gap: 0.6rem;
       font-family: 'EB Garamond', serif;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       font-weight: 700;
       color: var(--primary);
       text-decoration: none;
+      letter-spacing: -0.01em;
     }
     .logo-icon {
       font-size: 1.6rem;
@@ -67,21 +77,19 @@
     .nav {
       display: flex;
       align-items: center;
-      gap: 1.5rem;
+      gap: 2rem;
     }
     .nav a {
       font-size: 0.85rem;
       font-weight: 500;
       color: var(--text-muted);
       text-decoration: none;
-      transition: color 0.15s;
+      transition: color 0.2s, border-color 0.2s;
       border-bottom: 2px solid transparent;
-      padding-bottom: 0.2rem;
+      padding-bottom: 0.25rem;
+      letter-spacing: 0.01em;
     }
-    .nav a:hover {
-      color: var(--primary);
-      border-bottom-color: var(--accent);
-    }
+    .nav a:hover,
     .nav a.active {
       color: var(--primary);
       border-bottom-color: var(--accent);
@@ -89,63 +97,56 @@
 
     /* ─── MAIN ─── */
     main {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      padding: 2rem 1.5rem 3rem;
-      max-width: 820px;
-      width: 100%;
+      max-width: 840px;
       margin: 0 auto;
+      padding: 2.5rem 1.5rem 3rem;
     }
 
-    .content {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 1.8rem;
-    }
-
-    /* ─── TARJETA ─── */
+    /* ─── CARD ─── */
     .card {
-      background: var(--white);
+      background: var(--card-bg);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 1.8rem 2rem;
+      padding: 2rem 2.2rem;
       border: 1px solid var(--border);
-      transition: box-shadow 0.2s;
+      transition: box-shadow 0.25s ease;
     }
     .card:hover {
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--shadow-hover);
     }
 
     .card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 1.2rem;
+      margin-bottom: 1.6rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
     .card-header h2 {
       font-family: 'EB Garamond', serif;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       font-weight: 600;
       color: var(--primary);
+      letter-spacing: -0.01em;
     }
     .card-header .badge {
       font-size: 0.7rem;
       font-weight: 600;
       color: var(--accent);
-      background: #fef9e7;
-      padding: 0.2rem 0.8rem;
-      border-radius: 20px;
-      border: 1px solid #f0e4c8;
+      background: #faf6ed;
+      padding: 0.2rem 1rem;
+      border-radius: 30px;
+      border: 1px solid #ece3d0;
+      letter-spacing: 0.03em;
     }
 
     /* ─── WAVEFORM ─── */
     .wave-wrap {
       width: 100%;
-      height: 80px;
-      background: #f8fafc;
-      border-radius: 8px;
+      height: 84px;
+      background: #f8f9fb;
+      border-radius: var(--radius-sm);
       overflow: hidden;
       position: relative;
       border: 1px solid var(--border);
@@ -162,46 +163,48 @@
       align-items: center;
       justify-content: center;
       font-size: 0.8rem;
-      color: #aaa;
+      color: #b0b8c4;
       pointer-events: none;
       font-weight: 300;
+      letter-spacing: 0.02em;
     }
 
     /* ─── TIMER ─── */
     .timer-wrapper {
       text-align: center;
-      padding: 0.4rem 0;
+      padding: 0.6rem 0 0.2rem;
     }
     .timer {
-      font-size: 2.8rem;
+      font-size: 3rem;
       font-weight: 300;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
       font-variant-numeric: tabular-nums;
       color: var(--primary);
+      line-height: 1.2;
     }
     .timer-label {
       font-size: 0.6rem;
       font-weight: 600;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
       color: var(--text-muted);
       margin-top: -0.2rem;
     }
     .timer-label.active {
-      color: #c0392b;
+      color: #b34a4a;
     }
 
     /* ─── BOTÓN GRABAR ─── */
     .rec-ring {
-      width: 120px;
-      height: 120px;
+      width: 128px;
+      height: 128px;
       border-radius: 50%;
       border: 2px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0.5rem auto;
-      background: #fafafa;
+      margin: 0.75rem auto;
+      background: #fafbfc;
       transition: border-color 0.3s;
     }
     .rec-ring:hover {
@@ -209,35 +212,40 @@
     }
 
     .rec-btn {
-      width: 96px;
-      height: 96px;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
       border: none;
       cursor: pointer;
       background: var(--primary);
-      font-size: 2.2rem;
+      font-size: 2.4rem;
       color: white;
-      transition: transform 0.15s, background 0.3s, box-shadow 0.3s;
+      transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 12px rgba(0, 51, 102, 0.2);
+      box-shadow: 0 6px 20px rgba(10, 37, 64, 0.18);
     }
     .rec-btn:hover {
-      transform: scale(1.05);
-      background: #004080;
+      transform: scale(1.04);
+      background: #0d2f50;
     }
     .rec-btn:active {
-      transform: scale(0.95);
+      transform: scale(0.94);
     }
 
     .rec-btn.recording {
-      background: #c0392b;
+      background: #b34a4a;
       animation: pulse-big 1.4s ease-in-out infinite;
     }
     @keyframes pulse-big {
-      0%,100% { box-shadow: 0 0 0 0 rgba(192, 57, 43, 0.4); }
-      50% { box-shadow: 0 0 0 20px rgba(192, 57, 43, 0); }
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(179, 74, 74, 0.35);
+      }
+      50% {
+        box-shadow: 0 0 0 24px rgba(179, 74, 74, 0);
+      }
     }
 
     .rec-btn.processing {
@@ -252,26 +260,38 @@
       font-size: 0.9rem;
       color: var(--text-muted);
       text-align: center;
-      min-height: 1.6rem;
+      min-height: 1.8rem;
       font-weight: 400;
+      letter-spacing: 0.01em;
+      padding: 0 0.5rem;
     }
-    .status-line.recording { color: #c0392b; }
-    .status-line.done { color: #27ae60; }
-    .status-line.err { color: #c0392b; }
-    .status-line.processing { color: var(--accent); }
+    .status-line.recording {
+      color: #b34a4a;
+    }
+    .status-line.done {
+      color: #2d7d46;
+    }
+    .status-line.err {
+      color: #b34a4a;
+    }
+    .status-line.processing {
+      color: var(--accent);
+    }
 
     /* ─── PLAYBACK ─── */
     .playback-wrap {
       display: none;
       flex-direction: column;
-      gap: 0.4rem;
+      gap: 0.3rem;
       padding: 0.8rem 1rem;
-      background: #f8fafc;
-      border-radius: 8px;
+      background: #f8f9fb;
+      border-radius: var(--radius-sm);
       border: 1px solid var(--border);
-      margin-top: 0.5rem;
+      margin-top: 0.75rem;
     }
-    .playback-wrap.visible { display: flex; }
+    .playback-wrap.visible {
+      display: flex;
+    }
     .playback-label {
       font-size: 0.65rem;
       font-weight: 600;
@@ -283,18 +303,21 @@
       width: 100%;
       border-radius: 6px;
       outline: none;
+      background: #f1f3f5;
     }
 
     /* ─── TRANSCRIPT ─── */
     .transcript-wrap {
       display: none;
       overflow: hidden;
-      border-radius: 8px;
-      background: #f8fafc;
+      border-radius: var(--radius-sm);
+      background: #f8f9fb;
       border: 1px solid var(--border);
-      margin-top: 0.5rem;
+      margin-top: 0.75rem;
     }
-    .transcript-wrap.visible { display: block; }
+    .transcript-wrap.visible {
+      display: block;
+    }
 
     .transcript-head {
       padding: 0.6rem 1rem;
@@ -306,24 +329,28 @@
       color: var(--text-muted);
       display: flex;
       justify-content: space-between;
+      align-items: center;
     }
-    .transcript-head span { color: #27ae60; }
+    .transcript-head span {
+      color: #2d7d46;
+      font-weight: 600;
+    }
 
     textarea#transcript {
       width: 100%;
       background: transparent;
       border: none;
       outline: none;
-      color: var(--text-dark);
+      color: var(--text);
       font-family: 'Inter', sans-serif;
-      font-size: 0.9rem;
-      line-height: 1.7;
+      font-size: 0.92rem;
+      line-height: 1.75;
       padding: 0.9rem 1rem;
       resize: vertical;
-      min-height: 120px;
+      min-height: 130px;
     }
     textarea#transcript::placeholder {
-      color: #aaa;
+      color: #b0b8c4;
       font-weight: 300;
     }
 
@@ -333,17 +360,24 @@
       padding: 0.9rem;
       background: var(--primary);
       border: none;
-      border-radius: 8px;
+      border-radius: var(--radius-sm);
       color: white;
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s, transform 0.1s;
       display: none;
+      letter-spacing: 0.02em;
     }
-    .btn-primary.visible { display: block; }
-    .btn-primary:hover { background: #004080; }
-    .btn-primary:active { transform: scale(0.98); }
+    .btn-primary.visible {
+      display: block;
+    }
+    .btn-primary:hover {
+      background: var(--primary-light);
+    }
+    .btn-primary:active {
+      transform: scale(0.98);
+    }
     .btn-primary:disabled {
       opacity: 0.5;
       cursor: not-allowed;
@@ -353,15 +387,17 @@
       background: transparent;
       border: 1px solid var(--border);
       color: var(--text-muted);
-      border-radius: 8px;
+      border-radius: var(--radius-sm);
       padding: 0.5rem 1.2rem;
       font-size: 0.8rem;
-      font-weight: 600;
+      font-weight: 500;
       cursor: pointer;
       transition: all 0.2s;
       display: none;
     }
-    .btn-secondary.visible { display: inline-block; }
+    .btn-secondary.visible {
+      display: inline-block;
+    }
     .btn-secondary:hover {
       border-color: var(--primary);
       color: var(--primary);
@@ -370,7 +406,7 @@
     .btn-retry {
       background: var(--accent);
       border: none;
-      border-radius: 8px;
+      border-radius: var(--radius-sm);
       color: white;
       padding: 0.5rem 1.2rem;
       font-size: 0.8rem;
@@ -379,8 +415,12 @@
       display: none;
       transition: opacity 0.2s;
     }
-    .btn-retry.visible { display: inline-block; }
-    .btn-retry:hover { opacity: 0.85; }
+    .btn-retry.visible {
+      display: inline-block;
+    }
+    .btn-retry:hover {
+      opacity: 0.85;
+    }
 
     .btn-group {
       display: flex;
@@ -388,6 +428,27 @@
       width: 100%;
       flex-wrap: wrap;
       justify-content: center;
+      margin-top: 0.25rem;
+    }
+
+    /* ─── SCREENS ─── */
+    .screen {
+      display: none;
+      animation: fadeUp 0.35s ease;
+    }
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     /* ─── MINUTA ─── */
@@ -398,41 +459,43 @@
 
     .minuta-toolbar {
       background: var(--primary);
-      padding: 0.8rem 1.2rem;
+      padding: 0.9rem 1.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 0.5rem;
+      gap: 0.6rem;
     }
     .minuta-toolbar h2 {
       font-family: 'EB Garamond', serif;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       color: white;
       font-weight: 600;
+      letter-spacing: 0.01em;
     }
     .minuta-toolbar .actions {
       display: flex;
-      gap: 0.3rem;
+      gap: 0.4rem;
       flex-wrap: wrap;
     }
     .minuta-toolbar .actions button {
-      padding: 0.3rem 0.9rem;
+      padding: 0.3rem 1rem;
       border-radius: 6px;
       font-size: 0.7rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.15s;
       border: none;
-      background: rgba(255,255,255,0.12);
+      background: rgba(255, 255, 255, 0.10);
       color: white;
+      letter-spacing: 0.02em;
     }
     .minuta-toolbar .actions button:hover {
-      background: rgba(255,255,255,0.2);
+      background: rgba(255, 255, 255, 0.20);
     }
     .minuta-toolbar .actions .btn-back {
       background: transparent;
-      border: 1px solid rgba(255,255,255,0.25);
+      border: 1px solid rgba(255, 255, 255, 0.20);
     }
     .minuta-toolbar .actions .btn-back:hover {
       border-color: white;
@@ -446,69 +509,131 @@
     }
 
     .minuta-doc {
-      padding: 2rem 2.2rem;
+      padding: 2.2rem 2.5rem;
       font-family: 'EB Garamond', serif;
-      font-size: 1rem;
+      font-size: 1.05rem;
       line-height: 1.9;
       white-space: pre-wrap;
       word-break: break-word;
       min-height: 280px;
-      background: var(--white);
-      color: var(--text-dark);
+      background: var(--card-bg);
+      color: var(--text);
     }
-    @media (max-width: 520px) {
-      .minuta-doc { padding: 1.2rem; font-size: 0.9rem; }
+    @media (max-width: 600px) {
+      .minuta-doc {
+        padding: 1.2rem 1.5rem;
+        font-size: 0.95rem;
+      }
     }
 
     /* ─── TOAST ─── */
     .toast {
       position: fixed;
-      bottom: 2rem;
+      bottom: 2.2rem;
       left: 50%;
       transform: translateX(-50%);
       background: var(--primary);
       color: white;
-      padding: 0.6rem 1.6rem;
-      border-radius: 30px;
+      padding: 0.6rem 1.8rem;
+      border-radius: 40px;
       font-size: 0.85rem;
       font-weight: 500;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s;
       z-index: 999;
-      box-shadow: var(--shadow);
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
       text-align: center;
       max-width: 90%;
+      letter-spacing: 0.01em;
     }
-    .toast.show { opacity: 1; }
+    .toast.show {
+      opacity: 1;
+    }
 
     /* ─── FOOTER ─── */
     footer {
       border-top: 1px solid var(--border);
-      background: var(--white);
-      padding: 1rem 2rem;
+      background: var(--card-bg);
+      padding: 1.2rem 2rem;
       text-align: center;
       font-size: 0.75rem;
       color: var(--text-muted);
+      letter-spacing: 0.02em;
     }
 
     /* ─── RESPONSIVE ─── */
     @media (max-width: 640px) {
-      header { padding: 0.6rem 1rem; }
-      .logo { font-size: 1.2rem; }
-      .nav { gap: 0.8rem; }
-      .nav a { font-size: 0.75rem; }
-      .card { padding: 1.2rem; }
-      .timer { font-size: 2.2rem; }
-      .rec-btn { width: 80px; height: 80px; font-size: 1.8rem; }
-      .rec-ring { width: 100px; height: 100px; }
-      main { padding: 1rem; }
+      header {
+        padding: 0.6rem 1rem;
+      }
+      .logo {
+        font-size: 1.2rem;
+      }
+      .nav {
+        gap: 1rem;
+      }
+      .nav a {
+        font-size: 0.75rem;
+      }
+      .card {
+        padding: 1.2rem 1rem;
+      }
+      .timer {
+        font-size: 2.4rem;
+      }
+      .rec-btn {
+        width: 80px;
+        height: 80px;
+        font-size: 1.8rem;
+      }
+      .rec-ring {
+        width: 110px;
+        height: 110px;
+      }
+      main {
+        padding: 1.2rem 0.8rem;
+      }
+      .card-header h2 {
+        font-size: 1.1rem;
+      }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #121826;
+        --card-bg: #1a2236;
+        --text: #e8edf5;
+        --text-muted: #9aa8b9;
+        --border: #2a344a;
+        --shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.4);
+      }
+      .card-header .badge {
+        background: #2a344a;
+        border-color: #3a445a;
+        color: var(--accent-light);
+      }
+      .wave-wrap,
+      .playback-wrap,
+      .transcript-wrap {
+        background: #0e1422;
+      }
+      textarea#transcript {
+        color: #e8edf5;
+      }
+      .rec-ring {
+        background: #0e1422;
+      }
+      footer {
+        background: #1a2236;
+        border-color: #2a344a;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- ─── HEADER ─── -->
   <header>
     <a href="#" class="logo">
       <span class="logo-icon">⚖</span>
@@ -521,93 +646,89 @@
     </div>
   </header>
 
-  <!-- ─── MAIN ─── -->
   <main>
-    <div class="content">
 
-      <!-- PANTALLA GRABADORA -->
-      <div id="screen-rec" class="screen active">
-        <div class="card">
-          <div class="card-header">
-            <h2>🎙️ Grabar Audiencia</h2>
-            <span class="badge">● Listo</span>
-          </div>
-
-          <!-- WAVEFORM -->
-          <div class="wave-wrap">
-            <canvas id="waveform"></canvas>
-            <div class="wave-idle" id="waveIdle">El audio aparecerá aquí</div>
-          </div>
-
-          <!-- TIMER -->
-          <div class="timer-wrapper">
-            <div class="timer" id="timer">00:00</div>
-            <div class="timer-label" id="timerLabel">Listo para grabar</div>
-          </div>
-
-          <!-- BOTÓN -->
-          <div style="text-align:center;">
-            <div class="rec-ring">
-              <button class="rec-btn" id="recBtn" onclick="toggleRecording()">🎙</button>
-            </div>
-          </div>
-
-          <div class="status-line" id="status">Presiona el botón para comenzar</div>
-
-          <!-- PLAYBACK -->
-          <div class="playback-wrap" id="playbackWrap">
-            <div class="playback-label">🎧 Escuchar grabación</div>
-            <audio id="audioPlayer" controls></audio>
-          </div>
-
-          <!-- TRANSCRIPCIÓN -->
-          <div class="transcript-wrap" id="transcriptWrap">
-            <div class="transcript-head">
-              📝 Transcripción <span id="transcriptBadge"></span>
-            </div>
-            <textarea id="transcript" placeholder="La transcripción aparecerá automáticamente…"></textarea>
-          </div>
-
-          <!-- BOTONES -->
-          <div class="btn-group">
-            <button class="btn-retry" id="retryBtn" onclick="retryTranscription()">🔄 Reintentar</button>
-          </div>
-          <button class="btn-primary" id="genBtn" onclick="generateMinuta()">Generar Minuta →</button>
-          <button class="btn-secondary" id="newBtn" onclick="resetRecorder()">+ Nueva grabación</button>
+    <!-- ─── PANTALLA GRABADORA ─── -->
+    <div id="screen-rec" class="screen active">
+      <div class="card">
+        <div class="card-header">
+          <h2>🎙️ Grabar Audiencia</h2>
+          <span class="badge">● Listo</span>
         </div>
-      </div>
 
-      <!-- PANTALLA MINUTA -->
-      <div id="screen-minuta" class="screen">
-        <div class="minuta-screen">
-          <div class="card">
-            <div class="minuta-toolbar">
-              <h2>📄 Minuta generada</h2>
-              <div class="actions">
-                <button class="btn-back" onclick="showScreen('rec')">← Volver</button>
-                <button onclick="copyMinuta()">Copiar</button>
-                <button class="btn-download" onclick="downloadMinuta()">⬇ .txt</button>
-              </div>
-            </div>
-            <div class="minuta-doc" id="minutaDoc"></div>
+        <!-- WAVEFORM -->
+        <div class="wave-wrap">
+          <canvas id="waveform"></canvas>
+          <div class="wave-idle" id="waveIdle">El audio aparecerá aquí</div>
+        </div>
+
+        <!-- TIMER -->
+        <div class="timer-wrapper">
+          <div class="timer" id="timer">00:00</div>
+          <div class="timer-label" id="timerLabel">Listo para grabar</div>
+        </div>
+
+        <!-- BOTÓN GRABAR -->
+        <div style="text-align:center;">
+          <div class="rec-ring">
+            <button class="rec-btn" id="recBtn" onclick="toggleRecording()">🎙</button>
           </div>
         </div>
-      </div>
 
+        <!-- STATUS -->
+        <div class="status-line" id="status">Presiona el botón para comenzar</div>
+
+        <!-- PLAYBACK -->
+        <div class="playback-wrap" id="playbackWrap">
+          <div class="playback-label">🎧 Escuchar grabación</div>
+          <audio id="audioPlayer" controls></audio>
+        </div>
+
+        <!-- TRANSCRIPT -->
+        <div class="transcript-wrap" id="transcriptWrap">
+          <div class="transcript-head">
+            📝 Transcripción <span id="transcriptBadge"></span>
+          </div>
+          <textarea id="transcript" placeholder="La transcripción aparecerá automáticamente…"></textarea>
+        </div>
+
+        <!-- BOTONES -->
+        <div class="btn-group">
+          <button class="btn-retry" id="retryBtn" onclick="retryTranscription()">🔄 Reintentar</button>
+        </div>
+        <button class="btn-primary" id="genBtn" onclick="generateMinuta()">Generar Minuta →</button>
+        <button class="btn-secondary" id="newBtn" onclick="resetRecorder()">+ Nueva grabación</button>
+      </div>
     </div>
+
+    <!-- ─── PANTALLA MINUTA ─── -->
+    <div id="screen-minuta" class="screen">
+      <div class="minuta-screen">
+        <div class="card">
+          <div class="minuta-toolbar">
+            <h2>📄 Minuta generada</h2>
+            <div class="actions">
+              <button class="btn-back" onclick="showScreen('rec')">← Volver</button>
+              <button onclick="copyMinuta()">Copiar</button>
+              <button class="btn-download" onclick="downloadMinuta()">⬇ .txt</button>
+            </div>
+          </div>
+          <div class="minuta-doc" id="minutaDoc"></div>
+        </div>
+      </div>
+    </div>
+
   </main>
 
-  <!-- ─── FOOTER ─── -->
   <footer>
     &copy; 2026 Minutas Jurídicas — Tecnología para el derecho
   </footer>
 
   <div class="toast" id="toast"></div>
 
-  <!-- ─── JAVASCRIPT ─── -->
   <script>
     // ════════════════════════════════════════════════════════════
-    // 1. ESTADO
+    // 1. STATE
     // ════════════════════════════════════════════════════════════
     let mediaRecorder = null;
     let audioChunks = [];
@@ -621,7 +742,7 @@
     let micStream = null;
 
     // ════════════════════════════════════════════════════════════
-    // 2. UI
+    // 2. UI HELPERS
     // ════════════════════════════════════════════════════════════
     function showScreen(id) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -639,7 +760,8 @@
       const t = document.getElementById('toast');
       t.textContent = msg;
       t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 3000);
+      clearTimeout(t._timeout);
+      t._timeout = setTimeout(() => t.classList.remove('show'), 3000);
     }
 
     // ════════════════════════════════════════════════════════════
@@ -669,7 +791,7 @@
         for (let i = 0; i < data.length; i++) {
           const h = (data[i] / 255) * canvas.height;
           const alpha = 0.4 + (data[i] / 255) * 0.6;
-          ctx.fillStyle = `rgba(0, 51, 102, ${alpha})`;
+          ctx.fillStyle = `rgba(10, 37, 64, ${alpha})`;
           ctx.fillRect(x, canvas.height - h, barW - 1, h);
           x += barW;
         }
@@ -678,8 +800,10 @@
     }
 
     function stopWaveform() {
-      if (waveRAF) { cancelAnimationFrame(waveRAF); waveRAF = null; }
-      if (audioCtx) { audioCtx.close(); audioCtx = null; }
+      if (waveRAF) { cancelAnimationFrame(waveRAF);
+        waveRAF = null; }
+      if (audioCtx) { audioCtx.close();
+        audioCtx = null; }
       const canvas = document.getElementById('waveform');
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -692,7 +816,8 @@
     function startTimer() {
       seconds = 0;
       updateTimerDisplay();
-      timerInterval = setInterval(() => { seconds++; updateTimerDisplay(); }, 1000);
+      timerInterval = setInterval(() => { seconds++;
+        updateTimerDisplay(); }, 1000);
     }
 
     function stopTimer() {
@@ -707,7 +832,7 @@
     }
 
     // ════════════════════════════════════════════════════════════
-    // 5. GRABACIÓN
+    // 5. RECORDING
     // ════════════════════════════════════════════════════════════
     async function toggleRecording() {
       if (isRecording) {
@@ -773,7 +898,7 @@
     }
 
     // ════════════════════════════════════════════════════════════
-    // 6. TRANSCRIPCIÓN CON WHISPER (backend Vercel)
+    // 6. WHISPER TRANSCRIPTION (backend Vercel)
     // ════════════════════════════════════════════════════════════
     async function transcribeWithWhisper(blob) {
       const formData = new FormData();
@@ -835,7 +960,7 @@
     }
 
     // ════════════════════════════════════════════════════════════
-    // 8. REINTENTAR
+    // 8. RETRY
     // ════════════════════════════════════════════════════════════
     async function retryTranscription() {
       if (!audioBlob) {
@@ -862,7 +987,7 @@
     }
 
     // ════════════════════════════════════════════════════════════
-    // 9. GENERAR MINUTA
+    // 9. GENERATE MINUTA
     // ════════════════════════════════════════════════════════════
     async function generateMinuta() {
       const transcript = document.getElementById('transcript').value.trim();
@@ -925,7 +1050,7 @@ ${transcript}
     }
 
     // ════════════════════════════════════════════════════════════
-    // 10. UTILIDADES
+    // 10. UTILITIES
     // ════════════════════════════════════════════════════════════
     function resetRecorder() {
       audioBlob = null;
@@ -947,11 +1072,13 @@ ${transcript}
 
     function copyMinuta() {
       const text = document.getElementById('minutaDoc').textContent;
+      if (!text) { showToast('No hay minuta para copiar.'); return; }
       navigator.clipboard.writeText(text).then(() => showToast('Copiado ✓'));
     }
 
     function downloadMinuta() {
       const text = document.getElementById('minutaDoc').textContent;
+      if (!text) { showToast('No hay minuta para descargar.'); return; }
       const date = new Date().toLocaleDateString('es-CL').replace(/\//g, '-');
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' }));
@@ -961,4 +1088,3 @@ ${transcript}
   </script>
 </body>
 </html>
-
